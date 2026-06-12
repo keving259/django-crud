@@ -1,0 +1,13 @@
+{% extends "base/base.html" %}
+
+{% block title %}Modificar Datos{% endblock %}
+
+{% block content %}
+<h2>¿Qué deseas modificar?</h2>
+
+<a href="{% url 'modificar_cliente' %}" class="btn btn-primary m-2">Modificar Clientes</a>
+<a href="{% url 'modificar_cuenta' %}" class="btn btn-success m-2">Modificar Cuentas</a>
+
+{% include "base/boton_inicio.html" %}
+
+{% endblock %}

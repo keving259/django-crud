@@ -1,0 +1,86 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Agregar Cuenta{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'sysadmin/css/main.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="contenedor contenedor-clientes">
+    <h1 class="titulo-principal">Agregar Cuenta</h1>
+
+    {% if mensaje %}
+        <p style="color: green;">{{ mensaje }}</p>
+    {% endif %}
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <div class="formulario-contenedor">
+        <form method="post" action="" class="formulario-grid">
+            {% csrf_token %}
+
+            <div class="campo-form">
+                <label for="id_cliente">ID del Cliente:</label>
+                <input type="text" id="id_cliente" name="id_cliente" required
+                    list="lista_clientes"
+                    placeholder="Ej: 101"
+                    title="Selecciona un cliente por ID o nombre">
+                <datalist id="lista_clientes">
+                    {% for sugerencia in sugerencias_clientes %}
+                        <option value="{{ sugerencia }}">
+                    {% endfor %}
+                </datalist>
+            </div>
+
+
+
+            <div class="campo-form">
+                <label for="estado">Estado de la Cuenta:</label>
+                <select name="estado" id="estado" title="Selecciona el estado inicial de la cuenta" required>
+                    <option value="Activa">Activa</option>
+                    <option value="Suspendida">Suspendida</option>
+                </select>
+            </div>
+
+            <input type="hidden" name="zona_horaria" id="zona_horaria_input">
+
+            <div class="campo-form boton-submit">
+                <button type="submit" title="Haz clic para guardar los datos de la cuenta" class="btn-primario">
+                    Agregar Cuenta
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="{% static 'sysadmin/script.js' %}"></script>
+
+<script>
+    function eliminarAcentos(event) {
+        const sinAcentos = event.target.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if (event.target.value !== sinAcentos) {
+            event.target.value = sinAcentos;
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const inputsTexto = document.querySelectorAll("input[type='text']");
+        inputsTexto.forEach(input => {
+            input.addEventListener("input", eliminarAcentos);
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+                const input = document.getElementById("id_cliente");
+
+                input.addEventListener("input", () => {
+                    if (input.value.includes(" - ")) {
+                        input.value = input.value.split(" - ")[0].trim();
+                    }
+                });
+            });
+</script>
+{% endblock %}

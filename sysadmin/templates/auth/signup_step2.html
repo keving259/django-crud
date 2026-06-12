@@ -1,0 +1,47 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Registro – Paso 2{% endblock %}
+
+{% block content %}
+
+
+<div class="wrapper" style="height: 500px;">
+    <div class="form-box register">
+        <h2>Registro (Paso 2)</h2>
+        {% if error %}
+            <p style="color:red; text-align:center;">{{ error }}</p>
+        {% endif %}
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="input-box">
+                <span class="icon"><ion-icon name="person"></ion-icon></span>
+                <input type="text" name="NombreCompleto" required placeholder=" ">
+                <label>Nombre Completo</label>
+            </div>
+            <div class="input-box">
+                <span class="icon"><ion-icon name="call"></ion-icon></span>
+                <input type="text" name="Telefono" maxlength="10" required placeholder=" ">
+                <label>Teléfono</label>
+            </div>
+            <div class="input-box">
+                <select name="Rol" required>
+                    <option value="">Rol</option>
+                    {% for r in roles %}
+                        <option value="{{ r }}">{{ r }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="input-box">
+                <select name="Estado" required>
+                    <option value="">Estado</option>
+                    {% for e in estados %}
+                        <option value="{{ e }}">{{ e }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn">Finalizar Registro</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

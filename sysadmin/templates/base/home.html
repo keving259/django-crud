@@ -1,0 +1,109 @@
+{% extends "base/base.html" %}
+
+{% load static %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+    <div class="form-box" styles="margin-top: 20px;">
+        <h2>Información de sesión</h2>
+        <p><strong>Usuario:</strong> {{ usuario }}</p>
+        <p><strong>Rol:</strong> {{ tipo }}</p>
+        <p><strong>Último login:</strong> {{ last_login }}</p>
+        <p><strong>Total de logins:</strong> {{ total_login }}</p>
+        <p><strong>Hora UTC actual:</strong> {{ hora_utc_actual|date:"Y-m-d H:i:s" }} UTC</p>
+
+        <form method="post" action="/logout/" class="logout-form">
+            {% csrf_token %}
+            <button type="submit" id="btn-enviar" class="logout-btn">Cerrar sesión</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    a {
+        color: #69f;
+        text-decoration: none;
+    }
+
+    .toast-container {
+        position: fixed;
+        top: 47px;
+        right: 20px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .toast {
+        background-color: #333;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        min-width: 250px;
+        font-weight: bold;
+        opacity: 0.95;
+        transform: translateY(-10px);
+        animation: fadeInDown 0.3s ease-out;
+        transition: opacity 0.5s ease;
+    }
+
+    .toast.success {
+        background-color: #27ae60;
+    }
+
+    .toast.error {
+        background-color: #c0392b;
+    }
+
+    .toast.warning {
+        background-color: #f39c12;
+    }
+
+    .toast.info {
+        background-color: #3498db;
+    }
+
+    @keyframes fadeInDown {
+        0% {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        100% {
+            opacity: 0.95;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Botón de cerrar sesión
+        const form = document.querySelector('form.logout-form');
+        const btn = document.getElementById('btn-enviar');
+
+        if (form && btn) {
+            form.addEventListener('submit', function () {
+                btn.disabled = true;
+                btn.innerText = 'Cerrando sesión...';
+            });
+        }
+
+        // Ocultar los toasts automáticamente
+        const toasts = document.querySelectorAll('.toast');
+        setTimeout(() => {
+            toasts.forEach(toast => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 500); // Eliminar después de desvanecer
+            });
+        }, 4000);
+    });
+</script>
+{% endblock %}

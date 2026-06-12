@@ -1,0 +1,83 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Modificar Cuenta{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'sysadmin/css/main.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="contenedor contenedor-clientes">
+    <h1 class="titulo-principal">Modificar Cuenta</h1>
+
+    {% if error %}
+        <p style="color: red; margin-bottom: 15px;">{{ error }}</p>
+    {% endif %}
+    {% if mensaje %}
+        <p style="color: green; margin-bottom: 15px;">{{ mensaje }}</p>
+    {% endif %}
+
+    <div class="formulario-contenedor" style="max-width: 350px; margin-bottom: 30px;">
+        <form method="post" class="formulario-grid" style="grid-template-columns: 1fr auto;">
+            {% csrf_token %}
+            <div class="campo-form">
+                <input type="number" id="id_cuenta" name="id_cuenta" list="lista_id_cuentas" required placeholder="Ej: 1001" title="Ingresa el ID numérico de la cuenta">
+                <datalist id="lista_id_cuentas">
+                    {% for id in cuentas %}
+                        <option value="{{ id }}">
+                    {% endfor %}
+                </datalist>
+
+
+            </div>
+            <div class="campo-form boton-submit" style="align-items: flex-start;">
+                <button type="submit" name="buscar" class="btn-primario">Buscar</button>
+            </div>
+        </form>
+    </div>
+
+    
+    {% if cuenta %}
+    <hr>
+    <h2 class="titulo-secundario">Editar cuenta</h2>
+
+    <div class="formulario-contenedor" style="max-width: 700px;">
+        <form method="post" class="formulario-grid">
+            {% csrf_token %}
+            <input type="hidden" name="id_cuenta" value="{{ cuenta.IDCuenta }}">
+
+            <div class="campo-form">
+                <label for="id_cliente">ID Cliente:</label>
+                <input type="number" id="id_cliente" name="id_cliente" value="{{ cuenta.IDCliente }}" required placeholder="Ej: 500" title="Ingresa el ID numérico del cliente">
+            </div>
+
+            <div class="campo-form">
+                <label for="saldo">Saldo:</label>
+                <input type="number" id="saldo" name="saldo" value="{{ cuenta.Saldo }}" required step="0.01" placeholder="Ej: 1000.00" title="Ingresa el saldo con hasta dos decimales">
+            </div>
+
+            <div class="campo-form">
+                <label for="estado">Estado:</label>
+                <select id="estado" name="estado" required title="Selecciona el estado de la cuenta">
+                    <option value="Activa" {% if cuenta.Estado == 'Activa' %}selected{% endif %}>Activa</option>
+                    <option value="Suspendida" {% if cuenta.Estado == 'Suspendida' %}selected{% endif %}>Suspendida</option>
+                </select>
+            </div>
+
+            <div class="campo-form" style="align-items: flex-start;">
+                <label for="deleted">Eliminar cuenta:</label>
+                <input type="checkbox" id="deleted" name="deleted" {% if cuenta.Deleted %}checked{% endif %}>
+            </div>
+
+            <input type="hidden" id="zona_horaria_input" name="zona_horaria" value="{{ cuenta.ZonaHoraria }}">
+
+            <div class="campo-form boton-submit" style="grid-column: 1 / -1;">
+                <button type="submit" name="modificar" class="btn-primario">Guardar cambios</button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

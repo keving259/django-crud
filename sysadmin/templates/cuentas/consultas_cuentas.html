@@ -1,0 +1,210 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Consulta de Cuentas{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'sysadmin/css/main.css' %}?v=2" />
+{% endblock %}
+
+{% block content %}
+<div class="contenedor contenedor-clientes">
+    <h1 class="titulo-principal">Consulta de Cuentas</h1>
+
+    <!-- Formulario en grid -->
+    <div class="formulario-contenedor">
+        <form method="post" class="formulario-grid">
+            {% csrf_token %}
+
+            <div class="campo-form">
+                <label for="id_cuenta">ID Cuenta:</label>
+                <input type="text" id="id_cuenta" name="id_cuenta"
+                    placeholder="Ej: 12345" value="{{ cuenta.IDCuenta|default:id_cuenta }}"
+                    pattern="[A-Za-z0-9\s]+" title="No uses acentos ni caracteres especiales.">
+            </div>
+
+            <div class="campo-form">
+                <label for="nombre_completo">Nombre completo:</label>
+                <input type="text" id="nombre_completo" name="nombre_completo"
+                    placeholder="Ej: Juan Perez" value="{{ nombre_completo|default:'' }}"
+                    pattern="[A-Za-z\s]+" title="Solo letras sin acentos.">
+            </div>
+
+            <div class="campo-form">
+                <label for="telefono">Teléfono:</label>
+                <input type="text" id="telefono" name="telefono"
+                    placeholder="Ej: 5512345678" value="{{ telefono|default:'' }}">
+            </div>
+
+            <div class="campo-form">
+                <label for="correo">Correo:</label>
+                <input text="email" id="correo" name="correo"
+                    placeholder="Ej: usuario@ejemplo.com" value="{{ correo|default:'' }}"
+                    title="Introduce un correo válido.">
+            </div>
+
+            <input type="hidden" name="zona_horaria" id="zona_horaria_input" value="America/Mexico_City">
+
+            <div class="campo-form boton-submit">
+                <button type="submit" class="btn-primario">Buscar</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Resultados -->
+    {% if datos %}
+    <h2 class="titulo-secundario">Resultados encontrados:</h2>
+    <div class="tabla-contenedor">
+        <table class="tabla-datos">
+            <thead>
+                <tr>
+                    <th>ID Cuenta</th>
+                    <th>Nombre completo</th>
+                    <th>Teléfono</th>
+                    <th>Correo</th>
+                    <th>Dirección</th>
+                    <th>Fecha de registro</th>
+                    <th>Saldo</th>
+                    <th>Estado</th>
+                    <th>Acciones</th> <!-- ← NUEVA COLUMNA -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for cuenta in datos %}
+                    <tr>
+                        <td>{{ cuenta.IDCuenta }}</td>
+                        <td>{{ cuenta.NombreCompleto }}</td>
+                        <td>{{ cuenta.Telefono }}</td>
+                        <td>{{ cuenta.Correo }}</td>
+                        <td>{{ cuenta.Direccion }}</td>
+                        <td>{{ cuenta.FechaRegistro }}</td>
+                        <td>{{ cuenta.Saldo }}</td>
+                        <td>{{ cuenta.Estado }}</td>
+                        <td>
+                            <!-- Botón Actualizar -->
+                            <a href="{% url 'modificar_cuenta' cuenta.IDCuenta %}" class="btn-accion actualizar">
+                                Actualizar
+                            </a>
+
+                            <!-- Botón Eliminar -->
+                            <td>
+                                <form action="{% url 'eliminar_cuenta' id=cuenta.IDCuenta %}"  method="POST" style="display:inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="zona_horaria" value="America/Mexico_City"> 
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('¿Seguro que deseas eliminar esta cuenta?');">
+                                        Eliminar
+                                    </button>
+                                </form>
+                            </td>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% elif id_cuenta or nombre_completo or telefono or correo %}
+        <p class="sin-resultados">No se encontraron resultados.</p>
+    {% endif %}
+</div>
+{% if deleted == "1" %}
+<div id="toast" class="toast">Cuenta eliminada correctamente.</div>
+{% endif %}
+
+<style>
+.toast {
+    visibility: visible;
+    min-width: 250px;
+    background-color: #4BB543; /* verde */
+    color: white;
+    text-align: center;
+    border-radius: 5px;
+    padding: 16px;
+    position: fixed;
+    z-index: 9999;
+    top: 20px;         /* Cambiado de bottom a top */
+    right: 20px;       /* Posicionado a la derecha */
+    font-size: 17px;
+    opacity: 0.95;
+    transition: opacity 0.5s ease-in-out;
+}
+.toast.hide {
+    opacity: 0;
+    visibility: hidden;
+}
+</style>
+
+
+
+<script>
+    function eliminarAcentos(event) {
+        const sinAcentos = event.target.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if (event.target.value !== sinAcentos) {
+            event.target.value = sinAcentos;
+        }
+    }
+
+    function confirmarEliminacion(idCuenta, nombreCompleto) {
+        return confirm(`¿Está seguro que desea eliminar la cuenta con ID ${idCuenta} (${nombreCompleto})?`);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const inputsTexto = document.querySelectorAll("input[type='text']");
+        inputsTexto.forEach(input => {
+            input.addEventListener("input", eliminarAcentos);
+        });
+        const toast = document.getElementById('toast');
+        if (toast) {
+            setTimeout(() => {
+                toast.classList.add('hide');
+            }, 3000);
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const inputsTexto = document.querySelectorAll("input[type='text']");
+        inputsTexto.forEach(input => {
+            input.addEventListener("input", eliminarAcentos);
+        });
+
+        // Detectar zona horaria
+        const zonaHoraria = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const diferenciaMinutos = new Date().getTimezoneOffset();
+        const diferenciaHoras = -diferenciaMinutos / 60;
+
+        console.log("Zona horaria detectada:", zonaHoraria);
+        console.log("Diferencia con UTC:", diferenciaHoras + " horas");
+
+        // Opciones de formato local
+        const opcionesFormato = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true,
+            timeZone: zonaHoraria,
+        };
+
+        // Convertir fechas de la tabla a hora local
+        const filas = document.querySelectorAll("table.tabla-datos tbody tr");
+        filas.forEach(fila => {
+            const celdaFecha = fila.cells[2]; // Tercera celda (Fecha)
+            if (celdaFecha) {
+                let textoOriginal = celdaFecha.textContent.trim();
+
+                // Normalizar formato AM/PM
+                textoOriginal = textoOriginal.replace("a.m.", "AM").replace("p.m.", "PM");
+
+                const fechaUTC = new Date(textoOriginal + " UTC");
+                if (!isNaN(fechaUTC)) {
+                    const fechaLocal = new Intl.DateTimeFormat('es-MX', opcionesFormato).format(fechaUTC);
+                    celdaFecha.textContent = fechaLocal;
+                } else {
+                    console.warn("No se pudo convertir la fecha:", textoOriginal);
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

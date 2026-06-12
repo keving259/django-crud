@@ -1,0 +1,95 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Modificar Cliente{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'sysadmin/css/main.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="contenedor contenedor-clientes">
+    <h1 class="titulo-principal">Modificar Cliente</h1>
+
+    {% if error %}
+        <p style="color: red; margin-bottom: 15px;">{{ error }}</p>
+    {% endif %}
+    {% if mensaje %}
+        <p style="color: green; margin-bottom: 15px;">{{ mensaje }}</p>
+    {% endif %}
+
+    {% if tipo == "Master" %}
+    <div class="formulario-contenedor" style="max-width: 350px; margin-bottom: 30px;">
+        <form method="post" class="formulario-grid" style="grid-template-columns: 1fr auto;">
+            {% csrf_token %}
+            <div class="campo-form">
+                <input type="number" id="id_cliente" name="id_cliente" list="lista_id_clientes" required placeholder="Ej: 101" title="Ingresa el ID numérico del cliente" value="{{ cliente.IDCliente|default:'' }}">
+                <datalist id="lista_id_clientes">
+                    {% for id in clientes_ids %}
+                        <option value="{{ id }}">
+                    {% endfor %}
+                </datalist>
+            </div>
+            <div class="campo-form boton-submit" style="align-items: flex-start;">
+                <button type="submit" name="buscar" class="btn-primario">Buscar</button>
+            </div>
+        </form>
+    </div>
+
+    {% if cliente %}
+    <hr>
+    <h2 class="titulo-secundario">Editar cliente</h2>
+    <div class="formulario-contenedor" style="max-width: 700px;">
+        <form method="post" class="formulario-grid">
+            {% csrf_token %}
+            <input type="hidden" name="id_cliente" value="{{ cliente.IDCliente }}">
+
+            <div class="campo-form">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" placeholder="Ej: Juan" value="{{ cliente.Nombre }}" required
+                    pattern="[A-Za-z\s]+" title="Solo letras sin acentos.">
+            </div>
+
+            <div class="campo-form">
+                <label for="apellido">Apellido:</label>
+                <input type="text" id="apellido" name="apellido" placeholder="Ej: Perez" value="{{ cliente.Apellido }}" required
+                    pattern="[A-Za-z\s]+" title="Solo letras sin acentos.">
+            </div>
+
+            <div class="campo-form">
+                <label for="telefono">Teléfono:</label>
+                <input type="text" id="telefono" name="telefono" placeholder="Ej: 5512345678" value="{{ cliente.Telefono }}"
+                    pattern="[0-9]{10,}" title="Solo números, mínimo 10 dígitos.">
+            </div>
+
+            <div class="campo-form">
+                <label for="correo">Email:</label>
+                <input type="email" id="correo" name="correo" placeholder="usuario@ejemplo.com" value="{{ cliente.Correo }}"
+                    title="Introduce un correo electrónico válido.">
+            </div>
+
+            <div class="campo-form">
+                <label for="direccion">Dirección:</label>
+                <input type="text" id="direccion" name="direccion" placeholder="Ej: Av. Insurgentes 123" value="{{ cliente.Direccion }}"
+                    pattern="[A-Za-z0-9\s.,#\-]+" title="Evita acentos y símbolos especiales.">
+            </div>
+
+            <div class="campo-form" style="align-items: flex-start;">
+                <label for="deleted">Eliminar:</label>
+                <input type="checkbox" id="deleted" name="deleted" {% if cliente.Deleted %}checked{% endif %}>
+            </div>
+
+            <input type="hidden" id="zona_horaria_input" name="zona_horaria" value="{{ cliente.ZonaHoraria }}">
+
+            <div class="campo-form boton-submit" style="grid-column: 1 / -1;">
+                <button type="submit" name="modificar" class="btn-primario">Guardar cambios</button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+    {% else %}
+        <p style="color:red;">Acceso restringido. Esta sección solo está disponible para usuarios con rol Master.</p>
+    {% endif %}
+
+</div>
+{% endblock %}

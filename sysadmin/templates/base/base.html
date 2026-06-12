@@ -1,0 +1,259 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <title>{% block title %}Caja de Ahorro{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'sysadmin/css/main.css' %}" />
+
+    {% block extra_styles %}{% endblock %}
+</head>
+
+<body>
+    
+{% block header %}
+<header>
+    <div class="header-top">
+        <div class="estado-usuario">
+            {% if estado_usuario == 'Conectado' %}
+                <span class="status online">🟢 {{ estado_usuario }} a la base de datos</span>
+            {% else %}
+                <span class="status offline">🔴 Desconectado</span>
+            {% endif %}
+        </div>
+
+        <div class="hora-utc">
+            <span id="hora-utc">{{ hora_utc_actual|date:"Y-m-d H:i:s" }}</span> UTC
+        </div>
+    </div>
+
+    <nav class="nav-menu">
+        <ul class="nav-list">
+
+            <!-- INICIO -->
+            {% if tipo == "Master" or tipo == "Sistema" or tipo == "Lector" %}
+                <li><a href="{% url 'home' %}">Inicio</a></li>
+            {% endif %}
+
+
+            <!-- CONSULTAS -->
+            {% if tipo == "Master" or tipo == "Lector" %}
+            <li class="submenu">
+                <a href="#">Consultar Datos ▾</a>
+                <ul class="submenu-list">
+                    <li><a href="{% url 'consultas_clientes' %}">Consultar Clientes</a></li>
+                    <li><a href="{% url 'consultas_cuentas' %}">Consultar Cuentas</a></li>
+                </ul>
+            </li>
+            {% endif %}
+
+
+            <!-- LOGS -->
+            {% if tipo == "Sistema" %}
+                <li class="submenu">
+                    <a href="#">Ver Movimientos ▾</a>
+                    <ul class="submenu-list">
+                        <li><a href="{% url 'consultar_logs_clientes' %}">Logs de Clientes</a></li>
+                        <li><a href="{% url 'consultar_logs_cuentas' %}">Logs de Cuentas</a></li>
+                    </ul>
+                </li>
+            {% endif %}
+
+
+            <!-- AGREGAR USUARIOS -->
+            {% if tipo == "Master" %}
+                <li><a href="{% url 'signup_step1' %}">Agregar Usuario</a></li>
+            {% endif %}
+
+            
+
+            <!-- INSESRT -->
+            {% if tipo == "Master"%}
+                <li class="submenu">
+                    <a href="#">Insertar datos ▾</a>
+                    <ul class="submenu-list">
+                        <li><a href="{% url 'agregar_cliente' %}">Insertar Cliente</a></li>
+                        <li><a href="{% url 'agregar_cuenta' %}">Insertar Cuenta</a></li>
+                    </ul>
+                </li>
+            {% endif %}
+
+
+            
+            <!-- UPDATE -->
+            {% if tipo == "Master" %}
+                <li class="submenu">
+                    <a href="#">Modificar Datos ▾</a>
+                    <ul class="submenu-list">
+                        <li><a href="{% url 'modificar_cliente' %}">Modificar Clientes</a></li>
+                        <li><a href="{% url 'modificar_cuenta' %}">Modificar Cuentas</a></li>
+                    </ul>
+                </li>
+            {% endif %}
+
+
+        </ul>
+    </nav>
+</header>
+
+{% endblock %}
+
+
+    <!-- Mensajes tipo toast -->
+    {% if messages %}
+    <div id="alertas" style="position: fixed; top: 70px; right: 20px; z-index: 1000;">
+        {% for message in messages %}
+        <div class="alert {{ message.tags }}" style="
+            background-color: {% if message.tags == 'success' %}#d4edda
+                            {% else %}#d1ecf1{% endif %};
+            color: #000; 
+            border-radius: 5px; 
+            padding: 10px; 
+            margin-bottom: 10px;
+            box-shadow: 0 0 8px rgba(0,0,0,0.2);
+            min-width: 250px;
+        ">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <hr>
+
+    <!-- CONTENIDO VARIABLE -->
+    {% block content %}{% endblock %}
+
+    <!-- ESTADO DE REPLICACIÓN -->
+    <div id="estado_replicacion_container"
+    style="position: fixed; bottom: 10px; right: 10px; 
+            background-color: #fff3cd; color: #856404; 
+            border: 1px solid #ffeeba; padding: 10px; 
+            border-radius: 5px; z-index: 1000;">
+    <div id="estado_replicacion" style="font-weight: bold; margin: 10px 0;">
+        Cargando estado de replicación...
+    </div>
+</div>
+
+
+    <div id="loading-indicator" style="
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(255, 255, 255, 0.6);
+    z-index: 2000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+">
+    <div class="spinner"></div>
+</div>
+
+
+<script>
+    const form = document.getElementById('login-form');
+    form.addEventListener('submit', function () {
+        const loader = document.getElementById('loading-indicator');
+        if (loader) loader.style.display = 'flex';
+    });
+</script>
+
+<script>
+function checkReplicacion() {
+    fetch('/api/estado_replicacion/')
+        .then(response => response.json())
+        .then(data => {
+            const estadoDiv = document.getElementById('estado_replicacion');
+            const container = document.getElementById('estado_replicacion_container');
+
+            if (data.modo_debug) {
+                estadoDiv.textContent = 'Modo DEBUG activo. No se muestra el estado real de replicación.';
+                container.style.backgroundColor = '#FFF3CD';
+                container.style.color = '#856404';
+                container.style.border = '1px solid #FFEEBA';
+                
+            } else if (data.replicacion_activa) {
+                estadoDiv.textContent = 'Los datos están actualizados. Lag: ' + data.seconds_behind + ' segundos.';
+                container.style.backgroundColor = '#D4EDDA';
+                container.style.color = '#155724';
+                container.style.border = '1px solid #C3E6DB';
+            } else {
+                estadoDiv.textContent = 'Los datos están desactualizados. Lag: ' + data.seconds_behind + ' segundos.';
+                container.style.backgroundColor = '#F8D7DA';
+                container.style.color = '#721C24';
+                container.style.border = '1px solid #F5C6CB';
+            }
+        })
+        .catch(error => {
+            console.error('Error al obtener estado de replicación:', error);
+            const estadoDiv = document.getElementById('estado_replicacion');
+            const container = document.getElementById('estado_replicacion_container');
+
+            estadoDiv.textContent = 'Error al conectar con el servidor.';
+            container.style.backgroundColor = '#fff3cd';
+            container.style.color = '#856404';
+            container.style.border = '1px solid #ffeeba';
+        });
+}
+</script>
+
+    <!-- SCRIPT PRINCIPAL -->
+    <script src="{% static 'sysadmin/script.js' %}">
+        setInterval(checkReplicacion, 30000);
+        checkReplicacion();
+    </script>
+
+    <!-- ACTUALIZACIÓN DINÁMICA DE HORA UTC -->
+    <script>
+        function actualizarHoraUTC() {
+            const span = document.getElementById("hora-utc");
+            let actual = new Date(span.innerText + ' UTC');
+            actual.setSeconds(actual.getSeconds() + 1);
+            span.innerText = actual.toISOString().slice(0, 19).replace('T', ' ');
+        }
+        setInterval(actualizarHoraUTC, 1000);
+    </script>
+
+    <!-- DESACTIVAR BOTÓN AL ENVIAR FORMULARIO -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                const btn = form.querySelector('#btn-enviar');
+                if (btn) {
+                    form.addEventListener('submit', () => {
+                        btn.disabled = true;
+                        btn.innerText = 'Enviando...';
+                    });
+                }
+            });
+        });
+    </script>
+
+    <!-- OCULTAR ALERTAS -->
+    <script>
+        setTimeout(() => {
+            const alertas = document.getElementById('alertas');
+            if (alertas) {
+                alertas.style.transition = "opacity 0.5s";
+                alertas.style.opacity = 0;
+                setTimeout(() => alertas.remove(), 500);
+            }
+        }, 4000);
+    </script>
+
+    <script>
+        window.addEventListener('load', () => {
+        const loader = document.getElementById('loading-indicator');
+        if (loader) loader.style.display = 'none';
+        });
+</script>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,12 @@
+{% extends "base/base.html" %}
+
+{% block title %}Consultar Datos{% endblock %}
+
+{% block content %}
+<h2>¿Qué deseas consultar?</h2>
+
+<a href="{% url 'consultar_logs_clientes' %}" class="btn btn-primary m-2">Consultar Logs de Clientes</a>
+<a href="{% url 'consultar_logs_cuentas' %}" class="btn btn-success m-2">Consultar Logs de Cuentas</a>
+
+{% include "base/boton_inicio.html" %}
+{% endblock %}

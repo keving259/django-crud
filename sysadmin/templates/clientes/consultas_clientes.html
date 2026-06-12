@@ -1,0 +1,198 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Consulta de Clientes{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'sysadmin/css/main.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="contenedor contenedor-clientes">
+    <h1 class="titulo-principal">Consulta de Clientes</h1>
+
+    <!-- Formulario en grid -->
+    <div class="formulario-contenedor">
+        <form method="GET" class="formulario-grid-cliente">
+            <div class="campo-form">
+                <label for="nombre_completo">Nombre completo:</label>
+                <input type="text" id="nombre_completo" name="nombre_completo"
+                    placeholder="Ej. Juan Pérez" title="Nombre sin acentos ni caracteres especiales"
+                    pattern="[A-Za-z\s]+" value="{{ nombre_completo|default:'' }}">
+            </div>
+
+            <div class="campo-form">
+                <label for="telefono">Teléfono:</label>
+                <input type="text" id="telefono" name="telefono"
+                    placeholder="10 dígitos"value="{{ telefono|default:'' }}">
+            </div>
+
+            <div class="campo-form">
+                <label for="correo">Correo:</label>
+                <input type="text" id="correo" name="correo"
+                    placeholder="ejemplo@correo.com" title="Correo sin acentos (formato válido)"
+                    value="{{ correo|default:'' }}">
+            </div>
+
+            <div class="campo-form">
+                <label for="direccion">Dirección:</label>
+                <input type="text" id="direccion" name="direccion"
+                    placeholder="Ej. Calle 123, Ciudad" title="Evita acentos y caracteres especiales"
+                    pattern="[A-Za-z0-9\s#\-.,]+" value="{{ direccion|default:'' }}">
+            </div>
+
+            <div class="campo-form">
+                <label for="registro">Registro (fecha):</label>
+                <input type="date" id="registro" name="registro"
+                    title="Fecha de registro. Formato: AAAA-MM-DD"
+                    value="{{ registro|default:'' }}">
+            </div>
+            <div class="campo-form boton-submit">
+                <button type="submit" class="btn-primario" title="Haz clic para buscar clientes">
+                    Buscar
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Resultados -->
+    {% if datos %}
+        <h2 class="titulo-secundario">Resultados:</h2>
+        <div class="tabla-contenedor">
+            <table class="tabla-datos">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Teléfono</th>
+                        <th>Correo</th>
+                        <th>Dirección</th>
+                        <th>Registro</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cliente in datos %}
+                        <tr>
+                            <td>{{ cliente.ID }}</td>
+                            <td>{{ cliente.Nombre }}</td>
+                            <td>{{ cliente.Telefono }}</td>
+                            <td>{{ cliente.Correo }}</td>
+                            <td>{{ cliente.Direccion }}</td>
+                            <td>{{ cliente.Registro }}</td>
+                            <td>
+                                <!-- Boton Actualizar -->
+                                <a href="{% url 'modificar_cliente' cliente.ID %}" class="btn-accion actualizar">Actualizar</a>
+
+                                <!-- Botón Eliminar -->
+                                <form method="post" action="{% url 'eliminar_cliente' id=cliente.ID %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-accion eliminar"
+                                        onclick="return confirmarEliminacion({{ cliente.ID }}, '{{ cliente.Nombre }} {{ cliente.Apellido }}');">
+                                        Eliminar
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+    {% elif nombre_completo or telefono or correo or direccion or registro %}
+        <p class="sin-resultados">No se encontraron resultados para la búsqueda.</p>
+    {% endif %}
+</div>
+
+<style>
+.toast {
+  background-color: #4BB543; /* verde para success */
+    color: white;
+    padding: 16px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    font-size: 16px;
+    opacity: 0.95;
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* Opcional: estilos para mensajes de error */
+.toast.error {
+    background-color: #D9534F;
+}
+
+/* Animación para ocultar */
+.toast.hide {
+    opacity: 0;
+    visibility: hidden;
+}
+</style>
+
+<script>
+    function eliminarAcentos(event) {
+        const sinAcentos = event.target.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if (event.target.value !== sinAcentos) {
+            event.target.value = sinAcentos;
+        }
+    }
+
+    function confirmarEliminacion(idCliente, nombreCompleto) {
+        return confirm(`¿Está seguro que desea eliminar al cliente con ID ${idCliente} (${nombreCompleto})?`);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Quitar acentos en inputs de texto
+        const inputsTexto = document.querySelectorAll("input[type='text']");
+        inputsTexto.forEach(input => {
+            input.addEventListener("input", eliminarAcentos);
+        });
+
+        // Ocultar toasts después de 3 segundos
+        const toasts = document.querySelectorAll('#toast-container .toast');
+        if (toasts.length) {
+            setTimeout(() => {
+                toasts.forEach(toast => toast.classList.add('hide'));
+            }, 3000);
+        }
+
+        // === Conversión de fecha UTC a local ===
+        const zonaHoraria = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const diferenciaMinutos = new Date().getTimezoneOffset();
+        const diferenciaHoras = -diferenciaMinutos / 60;
+
+        console.log("Zona horaria detectada:", zonaHoraria);
+        console.log("Diferencia con UTC:", diferenciaHoras + " horas");
+
+        const opcionesFormato = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true,
+            timeZone: zonaHoraria
+        };
+
+        const filas = document.querySelectorAll("table.tabla-datos tbody tr");
+        filas.forEach(fila => {
+            const celdaFecha = fila.cells[2]; 
+            if (celdaFecha) {
+                let textoOriginal = celdaFecha.textContent.trim();
+
+                textoOriginal = textoOriginal.replace("a.m.", "AM").replace("p.m.", "PM");
+
+                const fechaUTC = new Date(textoOriginal + " UTC");
+                if (!isNaN(fechaUTC)) {
+                    const fechaLocal = new Intl.DateTimeFormat('es-MX', opcionesFormato).format(fechaUTC);
+                    celdaFecha.textContent = fechaLocal;
+                } else {
+                    console.warn("No se pudo convertir la fecha:", textoOriginal);
+                }
+            }
+        });
+    });
+</script>
+
+{% endblock %}

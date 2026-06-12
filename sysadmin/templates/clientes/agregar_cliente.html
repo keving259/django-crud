@@ -1,0 +1,94 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Agregar Cliente{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'sysadmin/css/main.css' %}?v=3" />
+{% endblock %}
+
+{% block content %}
+<div class="contenedor contenedor-clientes">
+    <h1 class="titulo-principal">Agregar Cliente</h1>
+{% if messages %}
+    <div class='contenedor-mensajes'>
+        {% for message in messages %}
+            <div class='altert alert-{{ message.tag }}'>
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+    <div class="formulario-contenedor">
+        <form method="post" action="{% url 'agregar_cliente' %}" class="formulario-grid">
+            {% csrf_token %}
+
+            <div class="campo-form">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" placeholder="Ej. Juan" 
+                    title="Ingresa solo letras sin acentos ni caracteres especiales" 
+                    pattern="[A-Za-z\s]+" required>
+            </div>
+
+            <div class="campo-form">
+                <label for="apellido">Apellido:</label>
+                <input type="text" id="apellido" name="apellido" placeholder="Ej. Ocegueda" 
+                    title="Ingresa solo letras sin acentos ni caracteres especiales" 
+                    pattern="[A-Za-z\s]+" required>
+            </div>
+
+            <div class="campo-form">
+                <!-- Campo de entrada para el teléfono (máximo 10 dígitos) -->
+                <label>Teléfono:</label>
+                <input type="text" name="telefono" maxlength="10" placeholder="(123)4567890" pattern="\d{10}" title="Ingresa 10 números" required oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+            </div>
+
+            <div class="campo-form">
+                <label for="correo">Correo:</label>
+                <input type="email" id="correo" name="correo" placeholder="ejemplo@correo.com" 
+                    title="Formato válido: nombre@dominio.com" required>
+            </div>
+
+            <div class="campo-form">
+                <label for="direccion">Dirección:</label>
+                <input type="text" id="direccion" name="direccion" placeholder="Ej. Calle 123, Ciudad" 
+                    title="Evita acentos y caracteres especiales" 
+                    pattern="[A-Za-z0-9\s#\-.,]+" required>
+            </div>
+
+            <input type="hidden" name="zona_horaria" id="zona_horaria_input">
+
+            <div class="campo-form boton-submit">
+                <button type="submit" class="btn-primario" title="Haz clic para guardar los datos del cliente">
+                    Agregar Cliente
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% if mensaje %}
+        <p style="color: green; margin-top: 15px;">{{ mensaje }}</p>
+    {% endif %}
+
+    {% if error %}
+        <p style="color: red; margin-top: 15px;">{{ error }}</p>
+    {% endif %}
+</div>
+
+<script>
+    function eliminarAcentos(event) {
+        const sinAcentos = event.target.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if (event.target.value !== sinAcentos) {
+            event.target.value = sinAcentos;
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const camposTexto = document.querySelectorAll("input[type='text']:not([name='telefono'])");
+        camposTexto.forEach(input => {
+            input.addEventListener("input", eliminarAcentos);
+        });
+    });
+</script>
+{% endblock %}

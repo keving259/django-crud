@@ -1,0 +1,170 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Consultar Logs de Cuentas{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'sysadmin/css/main.css' %}" />
+<style>
+ul.sin-viñetas {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="contenedor contenedor-clientes">
+    <h1 class="titulo-principal">Consultar Logs de Cuentas</h1>
+
+    <div class="formulario-contenedor" style="max-width: 500px;">
+        <form method="get" class="formulario-grid">
+            <div class="campo-form">
+                <label for="fecha_inicio">Fecha de inicio (UTC):</label>
+                <input type="datetime-local" id="fecha_inicio" name="fecha_inicio" value="{{ fecha_inicio }}" required>
+            </div>
+
+            <div class="campo-form">
+                <label for="fecha_fin">Fecha de fin (UTC):</label>
+                <input type="datetime-local" id="fecha_fin" name="fecha_fin" value="{{ fecha_fin }}" required>
+            </div>
+
+            <div class="campo-form">
+                <label for="tipo_operacion">Tipo de operación:</label>
+                <select name="tipo_operacion" id="tipo_operacion">
+                    <option value="todos" {% if tipo_operacion == 'todos' %}selected{% endif %}>-- Todos --</option>
+                    <option value="insert" {% if tipo_operacion == 'insert' %}selected{% endif %}>Insert</option>
+                    <option value="update" {% if tipo_operacion == 'update' %}selected{% endif %}>Update</option>
+                </select>
+            </div>
+
+            <div class="campo-form boton-submit" style="grid-column: 1 / -1;">
+                <button type="submit" class="btn-primario">Buscar</button>
+            </div>
+        </form>
+    </div>
+
+    {% if messages %}
+        <div class="contenedor-mensajes" style="margin-top: 15px;">
+            {% for message in messages %}
+                <p class="alert alert-{{ message.tags }}" style="color: {% if message.tags == 'error' %}red{% else %}blue{% endif %};">
+                    {{ message }}
+                </p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if resultados %}
+    <h2 class="titulo-secundario" style="margin-top: 30px;">Resultados:</h2>
+    <div class="tabla-contenedor">
+        <table class="tabla-datos">
+            <thead>
+                <tr>
+                    <th>IDLog</th>
+                    <th>Usuario</th>
+                    <th>Fecha</th>
+                    <th>IP</th>
+                    <th>Tipo</th>
+                    <th>Valores Anteriores</th>
+                    <th>Valores Nuevos</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in resultados %}
+                <tr>
+                    <td>{{ row.IDLog }}</td>
+                    <td>{{ row.Usuario }}</td> 
+                    <td>{{ row.Fecha }}</td>
+                    <td>{{ row.IP }}</td> 
+                    <td>{{ row.TipoDeOperacion }}</td> 
+
+                    <td>
+                        {% if row.ValoresAnteriores %}
+                        <ul class="sin-viñetas">
+                            {% for clave, valor in row.ValoresAnteriores.items %}
+                                <li><strong>{{ clave }}:</strong> {{ valor }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if row.ValoresNuevos %}
+                        <ul class="sin-viñetas">
+                            {% for clave, valor in row.ValoresNuevos.items %}
+                                <li><strong>{{ clave }}:</strong> {{ valor }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function eliminarAcentos(event) {
+        const sinAcentos = event.target.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if (event.target.value !== sinAcentos) {
+            event.target.value = sinAcentos;
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const inputsTexto = document.querySelectorAll("input[type='text']");
+        inputsTexto.forEach(input => {
+            input.addEventListener("input", eliminarAcentos);
+        });
+
+        // Detectar zona horaria
+        const zonaHoraria = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const diferenciaMinutos = new Date().getTimezoneOffset();
+        const diferenciaHoras = -diferenciaMinutos / 60;
+
+        console.log("Zona horaria detectada:", zonaHoraria);
+        console.log("Diferencia con UTC:", diferenciaHoras + " horas");
+
+        // Opciones de formato local
+        const opcionesFormato = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true,
+            timeZone: zonaHoraria,
+        };
+
+        // Convertir fechas de la tabla a hora local
+        const filas = document.querySelectorAll("table.tabla-datos tbody tr");
+        filas.forEach(fila => {
+            const celdaFecha = fila.cells[2]; // Tercera celda (Fecha)
+            if (celdaFecha) {
+                let textoOriginal = celdaFecha.textContent.trim();
+
+                // Normalizar formato AM/PM
+                textoOriginal = textoOriginal.replace("a.m.", "AM").replace("p.m.", "PM");
+
+                const fechaUTC = new Date(textoOriginal + " UTC");
+                if (!isNaN(fechaUTC)) {
+                    const fechaLocal = new Intl.DateTimeFormat('es-MX', opcionesFormato).format(fechaUTC);
+                    celdaFecha.textContent = fechaLocal;
+                } else {
+                    console.warn("No se pudo convertir la fecha:", textoOriginal);
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

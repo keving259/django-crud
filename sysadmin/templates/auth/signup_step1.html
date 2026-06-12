@@ -1,0 +1,48 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Registro – Paso 1{% endblock %}
+
+{% block content %}
+
+
+<div class="wrapper">
+    <div class="form-box register">
+        <h2>Registro (Paso 1)</h2>
+        {% if error %}
+            <p style="color:red; text-align:center;">{{ error }}</p>
+        {% endif %}
+        {% if mensaje %}
+            <p style="color:green; text-align:center;">{{ mensaje }}</p>
+        {% endif %}
+
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="input-box">
+                <span class="icon"><ion-icon name="person"></ion-icon></span>
+                <input type="text" name="NombreDeUsuario" required placeholder=" ">
+                <label>Nombre de Usuario</label>
+            </div>
+            <div class="input-box">
+                <span class="icon"><ion-icon name="mail"></ion-icon></span>
+                <input type="email" name="CorreoElectronico" required placeholder=" ">
+                <label>Correo</label>
+            </div>
+            <div class="input-box">
+                <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                <input type="password" name="Pass" required placeholder=" ">
+                <label>Contraseña</label>
+            </div>
+
+            <!-- para guardar zona horaria -->
+            <input type="hidden" name="zona_horaria" id="zona_horaria_input">
+
+            <button type="submit" class="btn">Continuar</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'sysadmin/script.js' %}"></script>
+{% endblock %}
