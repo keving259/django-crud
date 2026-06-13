@@ -512,3 +512,24 @@ body {
     background-color: #e74c3c;
     color: white;
 }
+
+.toast {
+    visibility: visible;
+    min-width: 250px;
+    background-color: #4BB543; /* verde */
+    color: white;
+    text-align: center;
+    border-radius: 5px;
+    padding: 16px;
+    position: fixed;
+    z-index: 9999;
+    top: 20px;         /* Cambiado de bottom a top */
+    right: 20px;       /* Posicionado a la derecha */
+    font-size: 17px;
+    opacity: 0.95;
+    transition: opacity 0.5s ease-in-out;
+}
+.toast.hide {
+    opacity: 0;
+    visibility: hidden;
+}

@@ -17,9 +17,10 @@
             {% csrf_token %}
 
             <div class="campo-form">
-                <label for="id_cuenta">ID Cuenta:</label>
+                <label for="id_cuenta">ID de Cuenta:</label>
                 <input type="text" id="id_cuenta" name="id_cuenta"
-                    placeholder="Ej: 12345" value="{{ cuenta.IDCuenta|default:id_cuenta }}"
+                    placeholder="Ej: 12345" 
+                    value="{{ id_cuenta|default:'' }}"
                     pattern="[A-Za-z0-9\s]+" title="No uses acentos ni caracteres especiales.">
             </div>
 
@@ -88,7 +89,7 @@
 
                             <!-- Botón Eliminar -->
                             <td>
-                                <form action="{% url 'eliminar_cuenta' id=cuenta.IDCuenta %}"  method="POST" style="display:inline;">
+                                <form action="{% url 'eliminar_cuenta' id_cuenta=cuenta.IDCuenta %}"  method="POST" style="display:inline;">
                                     {% csrf_token %}
                                     <input type="hidden" name="zona_horaria" value="America/Mexico_City"> 
                                     <button type="submit" class="btn btn-danger" onclick="return confirm('¿Seguro que deseas eliminar esta cuenta?');">
@@ -109,30 +110,6 @@
 {% if deleted == "1" %}
 <div id="toast" class="toast">Cuenta eliminada correctamente.</div>
 {% endif %}
-
-<style>
-.toast {
-    visibility: visible;
-    min-width: 250px;
-    background-color: #4BB543; /* verde */
-    color: white;
-    text-align: center;
-    border-radius: 5px;
-    padding: 16px;
-    position: fixed;
-    z-index: 9999;
-    top: 20px;         /* Cambiado de bottom a top */
-    right: 20px;       /* Posicionado a la derecha */
-    font-size: 17px;
-    opacity: 0.95;
-    transition: opacity 0.5s ease-in-out;
-}
-.toast.hide {
-    opacity: 0;
-    visibility: hidden;
-}
-</style>
-
 
 
 <script>

@@ -87,7 +87,7 @@ def login(request):
                 request.session['total_login'] = resultado_json.get('Total_Login')
 
                 messages.success(request, "Inicio de sesión exitoso! Bienvenido/a")
-                return redirect('/base/home/')
+                return redirect('home')
             else:
                 return render(request, 'auth/login.html', {
                     'error': resultado_json.get("Estado"),
@@ -685,7 +685,7 @@ def estado_sesion(request):
 
 def acceso_denegado(request):
     mensaje = "No tienes permisos para acceder a esta página."
-    destino = "/base/home/"
+    destino = "home"
 
     if not request.session.get('usuario'):
         mensaje = "Debes iniciar sesión para acceder a esta página."
