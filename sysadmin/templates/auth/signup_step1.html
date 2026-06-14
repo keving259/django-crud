@@ -1,48 +1,52 @@
 {% extends "base/base.html" %}
-{% load static %}
 
-{% block title %}Registro – Paso 1{% endblock %}
+{% block title %}Registro – Paso 1 | SysAdmin{% endblock %}
 
 {% block content %}
-
-
-<div class="wrapper">
+<div class="wrapper" style="max-width: 450px; margin: 40px auto;">
     <div class="form-box register">
-        <h2>Registro (Paso 1)</h2>
+        <h2 style="text-align: center; color: var(--color-primario); margin-bottom: 25px;">
+            <i class="ri-user-add-fill"></i> Registro (Paso 1/2)
+        </h2>
+        
         {% if error %}
-            <p style="color:red; text-align:center;">{{ error }}</p>
+            <div class="toast error" style="position: static; margin-bottom: 20px; width: 100%; opacity: 1;">
+                <i class="ri-error-warning-fill"></i>
+                <span>{{ error }}</span>
+            </div>
         {% endif %}
+        
         {% if mensaje %}
-            <p style="color:green; text-align:center;">{{ mensaje }}</p>
+            <div class="toast success" style="position: static; margin-bottom: 20px; width: 100%; opacity: 1;">
+                <i class="ri-checkbox-circle-fill"></i>
+                <span>{{ mensaje }}</span>
+            </div>
         {% endif %}
 
         <form action="" method="POST">
             {% csrf_token %}
-            <div class="input-box">
-                <span class="icon"><ion-icon name="person"></ion-icon></span>
-                <input type="text" name="NombreDeUsuario" required placeholder=" ">
-                <label>Nombre de Usuario</label>
+            
+            <div class="campo-form" style="margin-bottom: 20px;">
+                <label for="NombreDeUsuario"><i class="ri-user-line"></i> Nombre de Usuario</label>
+                <input type="text" name="NombreDeUsuario" id="NombreDeUsuario" required placeholder="Ej: usuario_nuevo">
             </div>
-            <div class="input-box">
-                <span class="icon"><ion-icon name="mail"></ion-icon></span>
-                <input type="email" name="CorreoElectronico" required placeholder=" ">
-                <label>Correo</label>
+            
+            <div class="campo-form" style="margin-bottom: 20px;">
+                <label for="CorreoElectronico"><i class="ri-mail-line"></i> Correo Electrónico</label>
+                <input type="email" name="CorreoElectronico" id="CorreoElectronico" required placeholder="ejemplo@correo.com">
             </div>
-            <div class="input-box">
-                <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
-                <input type="password" name="Pass" required placeholder=" ">
-                <label>Contraseña</label>
+            
+            <div class="campo-form" style="margin-bottom: 30px;">
+                <label for="Pass"><i class="ri-lock-line"></i> Contraseña</label>
+                <input type="password" name="Pass" id="Pass" required placeholder="Crea una contraseña segura">
             </div>
 
-            <!-- para guardar zona horaria -->
             <input type="hidden" name="zona_horaria" id="zona_horaria_input">
 
-            <button type="submit" class="btn">Continuar</button>
+            <button type="submit" class="btn btn-primario" style="width: 100%; font-size: 1.1rem; padding: 12px;">
+                Continuar al Paso 2 <i class="ri-arrow-right-line"></i>
+            </button>
         </form>
     </div>
 </div>
-{% endblock %}
-
-{% block extra_scripts %}
-<script src="{% static 'sysadmin/script.js' %}"></script>
 {% endblock %}

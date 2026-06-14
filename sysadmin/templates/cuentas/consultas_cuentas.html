@@ -1,185 +1,142 @@
 {% extends "base/base.html" %}
-{% load static %}
 
-{% block title %}Consulta de Cuentas{% endblock %}
-
-{% block extra_styles %}
-<link rel="stylesheet" href="{% static 'sysadmin/css/main.css' %}?v=2" />
-{% endblock %}
+{% block title %}Consulta de Cuentas | SysAdmin{% endblock %}
 
 {% block content %}
-<div class="contenedor contenedor-clientes">
-    <h1 class="titulo-principal">Consulta de Cuentas</h1>
+<div class="contenedor">
+    <h1 class="titulo-principal"><i class="ri-wallet-3-fill"></i> Directorio de Cuentas</h1>
 
-    <!-- Formulario en grid -->
     <div class="formulario-contenedor">
-        <form method="post" class="formulario-grid">
+        <form method="post">
             {% csrf_token %}
+            <div class="formulario-grid">
+                <div class="campo-form">
+                    <label for="id_cuenta"><i class="ri-hashtag"></i> ID de Cuenta</label>
+                    <input type="text" id="id_cuenta" name="id_cuenta"
+                        placeholder="Ej: 12345" value="{{ id_cuenta|default:'' }}"
+                        pattern="[A-Za-z0-9\s]+" title="No uses acentos ni caracteres especiales.">
+                </div>
 
-            <div class="campo-form">
-                <label for="id_cuenta">ID de Cuenta:</label>
-                <input type="text" id="id_cuenta" name="id_cuenta"
-                    placeholder="Ej: 12345" 
-                    value="{{ id_cuenta|default:'' }}"
-                    pattern="[A-Za-z0-9\s]+" title="No uses acentos ni caracteres especiales.">
+                <div class="campo-form">
+                    <label for="nombre_completo"><i class="ri-user-search-line"></i> Nombre completo</label>
+                    <input type="text" id="nombre_completo" name="nombre_completo" class="sin-acentos"
+                        placeholder="Ej: Juan Perez" value="{{ nombre_completo|default:'' }}"
+                        pattern="[A-Za-z\s]+" title="Solo letras sin acentos.">
+                </div>
+
+                <div class="campo-form">
+                    <label for="telefono"><i class="ri-phone-line"></i> Teléfono</label>
+                    <input type="text" id="telefono" name="telefono"
+                        placeholder="Ej: 5512345678" value="{{ telefono|default:'' }}">
+                </div>
+
+                <div class="campo-form">
+                    <label for="correo"><i class="ri-mail-line"></i> Correo</label>
+                    <input type="email" id="correo" name="correo" class="sin-acentos"
+                        placeholder="Ej: usuario@ejemplo.com" value="{{ correo|default:'' }}">
+                </div>
             </div>
 
-            <div class="campo-form">
-                <label for="nombre_completo">Nombre completo:</label>
-                <input type="text" id="nombre_completo" name="nombre_completo"
-                    placeholder="Ej: Juan Perez" value="{{ nombre_completo|default:'' }}"
-                    pattern="[A-Za-z\s]+" title="Solo letras sin acentos.">
-            </div>
-
-            <div class="campo-form">
-                <label for="telefono">Teléfono:</label>
-                <input type="text" id="telefono" name="telefono"
-                    placeholder="Ej: 5512345678" value="{{ telefono|default:'' }}">
-            </div>
-
-            <div class="campo-form">
-                <label for="correo">Correo:</label>
-                <input text="email" id="correo" name="correo"
-                    placeholder="Ej: usuario@ejemplo.com" value="{{ correo|default:'' }}"
-                    title="Introduce un correo válido.">
-            </div>
-
-            <input type="hidden" name="zona_horaria" id="zona_horaria_input" value="America/Mexico_City">
-
-            <div class="campo-form boton-submit">
-                <button type="submit" class="btn-primario">Buscar</button>
+            <div class="boton-submit">
+                <button type="submit" class="btn btn-primario no-loader" title="Buscar cuentas">
+                    <i class="ri-search-line"></i> Buscar
+                </button>
             </div>
         </form>
     </div>
 
-    <!-- Resultados -->
     {% if datos %}
-    <h2 class="titulo-secundario">Resultados encontrados:</h2>
-    <div class="tabla-contenedor">
-        <table class="tabla-datos">
-            <thead>
-                <tr>
-                    <th>ID Cuenta</th>
-                    <th>Nombre completo</th>
-                    <th>Teléfono</th>
-                    <th>Correo</th>
-                    <th>Dirección</th>
-                    <th>Fecha de registro</th>
-                    <th>Saldo</th>
-                    <th>Estado</th>
-                    <th>Acciones</th> <!-- ← NUEVA COLUMNA -->
-                </tr>
-            </thead>
-            <tbody>
-                {% for cuenta in datos %}
+        <div class="tabla-contenedor">
+            <table class="tabla-datos">
+                <thead>
                     <tr>
-                        <td>{{ cuenta.IDCuenta }}</td>
-                        <td>{{ cuenta.NombreCompleto }}</td>
-                        <td>{{ cuenta.Telefono }}</td>
-                        <td>{{ cuenta.Correo }}</td>
-                        <td>{{ cuenta.Direccion }}</td>
-                        <td>{{ cuenta.FechaRegistro }}</td>
-                        <td>{{ cuenta.Saldo }}</td>
-                        <td>{{ cuenta.Estado }}</td>
-                        <td>
-                            <!-- Botón Actualizar -->
-                            <a href="{% url 'modificar_cuenta' cuenta.IDCuenta %}" class="btn-accion actualizar">
-                                Actualizar
-                            </a>
-
-                            <!-- Botón Eliminar -->
+                        <th><i class="ri-hashtag"></i> ID</th>
+                        <th><i class="ri-user-line"></i> Nombre</th>
+                        <th><i class="ri-phone-line"></i> Teléfono</th>
+                        <th><i class="ri-mail-line"></i> Correo</th>
+                        <th><i class="ri-map-pin-line"></i> Dirección</th>
+                        <th><i class="ri-time-line"></i> Registro (Local)</th>
+                        <th><i class="ri-money-dollar-circle-line"></i> Saldo</th>
+                        <th><i class="ri-toggle-line"></i> Estado</th>
+                        <th style="text-align: center;"><i class="ri-settings-4-line"></i> Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cuenta in datos %}
+                        <tr>
+                            <td><strong>{{ cuenta.IDCuenta }}</strong></td>
+                            <td>{{ cuenta.NombreCompleto }}</td>
+                            <td>{{ cuenta.Telefono }}</td>
+                            <td>{{ cuenta.Correo }}</td>
+                            <td>{{ cuenta.Direccion }}</td>
+                            <td class="fecha-utc">{{ cuenta.FechaRegistro }}</td>
+                            <td style="font-weight: 600; color: #2d7a33;">${{ cuenta.Saldo }}</td>
                             <td>
-                                <form action="{% url 'eliminar_cuenta' id_cuenta=cuenta.IDCuenta %}"  method="POST" style="display:inline;">
+                                {% if cuenta.Estado == 'Activa' or cuenta.Estado == 'Activo' %}
+                                    <span class="badge online">{{ cuenta.Estado }}</span>
+                                {% else %}
+                                    <span class="badge offline">{{ cuenta.Estado }}</span>
+                                {% endif %}
+                            </td>
+                            <td style="text-align: center; white-space: nowrap;">
+                                
+                                <a href="{% url 'modificar_cuenta' cuenta.IDCuenta %}" class="btn-accion actualizar" title="Actualizar Cuenta">
+                                    <i class="ri-edit-box-line"></i>
+                                </a>
+
+                                <form action="{% url 'eliminar_cuenta' id_cuenta=cuenta.IDCuenta %}" method="POST" style="display:inline;">
                                     {% csrf_token %}
-                                    <input type="hidden" name="zona_horaria" value="America/Mexico_City"> 
-                                    <button type="submit" class="btn btn-danger" onclick="return confirm('¿Seguro que deseas eliminar esta cuenta?');">
-                                        Eliminar
+                                    <button type="submit" class="btn-accion eliminar" title="Eliminar Cuenta" 
+                                        onclick="return confirm('¿Seguro que deseas eliminar la cuenta de {{ cuenta.NombreCompleto }}?');">
+                                        <i class="ri-delete-bin-line"></i>
                                     </button>
                                 </form>
                             </td>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% elif id_cuenta or nombre_completo or telefono or correo %}
-        <p class="sin-resultados">No se encontraron resultados.</p>
+        <div class="formulario-contenedor" style="text-align: center; padding: 40px; margin-top: 30px;">
+            <i class="ri-folder-info-line" style="font-size: 3rem; color: #a0aec0;"></i>
+            <h3 style="color: #4a5568; margin-top: 10px;">No se encontraron cuentas</h3>
+            <p style="color: #718096;">Intenta modificar o limpiar los criterios de búsqueda.</p>
+        </div>
     {% endif %}
 </div>
-{% if deleted == "1" %}
-<div id="toast" class="toast">Cuenta eliminada correctamente.</div>
-{% endif %}
+{% endblock %}
 
-
+{% block extra_scripts %}
 <script>
-    function eliminarAcentos(event) {
-        const sinAcentos = event.target.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        if (event.target.value !== sinAcentos) {
-            event.target.value = sinAcentos;
-        }
-    }
-
-    function confirmarEliminacion(idCuenta, nombreCompleto) {
-        return confirm(`¿Está seguro que desea eliminar la cuenta con ID ${idCuenta} (${nombreCompleto})?`);
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-        const inputsTexto = document.querySelectorAll("input[type='text']");
-        inputsTexto.forEach(input => {
-            input.addEventListener("input", eliminarAcentos);
-        });
-        const toast = document.getElementById('toast');
-        if (toast) {
-            setTimeout(() => {
-                toast.classList.add('hide');
-            }, 3000);
-        }
-    });
-
     document.addEventListener('DOMContentLoaded', () => {
-        const inputsTexto = document.querySelectorAll("input[type='text']");
-        inputsTexto.forEach(input => {
-            input.addEventListener("input", eliminarAcentos);
+        // 1. Quitar acentos en tiempo real (solo inputs con la clase 'sin-acentos')
+        document.querySelectorAll("input.sin-acentos").forEach(input => {
+            input.addEventListener("input", (e) => {
+                const sinAcentos = e.target.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                if (e.target.value !== sinAcentos) {
+                    e.target.value = sinAcentos;
+                }
+            });
         });
 
-        // Detectar zona horaria
+        // 2. Conversión a prueba de fallos de UTC a Local
         const zonaHoraria = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        const diferenciaMinutos = new Date().getTimezoneOffset();
-        const diferenciaHoras = -diferenciaMinutos / 60;
-
-        console.log("Zona horaria detectada:", zonaHoraria);
-        console.log("Diferencia con UTC:", diferenciaHoras + " horas");
-
-        // Opciones de formato local
         const opcionesFormato = {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: true,
-            timeZone: zonaHoraria,
+            year: 'numeric', month: 'short', day: 'numeric',
+            hour: '2-digit', minute: '2-digit', hour12: true,
+            timeZone: zonaHoraria
         };
 
-        // Convertir fechas de la tabla a hora local
-        const filas = document.querySelectorAll("table.tabla-datos tbody tr");
-        filas.forEach(fila => {
-            const celdaFecha = fila.cells[2]; // Tercera celda (Fecha)
-            if (celdaFecha) {
-                let textoOriginal = celdaFecha.textContent.trim();
-
-                // Normalizar formato AM/PM
-                textoOriginal = textoOriginal.replace("a.m.", "AM").replace("p.m.", "PM");
-
-                const fechaUTC = new Date(textoOriginal + " UTC");
-                if (!isNaN(fechaUTC)) {
-                    const fechaLocal = new Intl.DateTimeFormat('es-MX', opcionesFormato).format(fechaUTC);
-                    celdaFecha.textContent = fechaLocal;
-                } else {
-                    console.warn("No se pudo convertir la fecha:", textoOriginal);
-                }
+        // Buscamos dinámicamente las celdas por su clase, evitando errores de columnas incorrectas
+        document.querySelectorAll("td.fecha-utc").forEach(celda => {
+            let textoOriginal = celda.textContent.trim().replace("a.m.", "AM").replace("p.m.", "PM");
+            if (!textoOriginal || textoOriginal === 'None') return;
+            
+            const fechaUTC = new Date(textoOriginal + ' UTC');
+            
+            if (!isNaN(fechaUTC)) {
+                celda.textContent = new Intl.DateTimeFormat('es-MX', opcionesFormato).format(fechaUTC);
             }
         });
     });

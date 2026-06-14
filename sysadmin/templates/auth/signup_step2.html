@@ -1,46 +1,59 @@
 {% extends "base/base.html" %}
-{% load static %}
 
-{% block title %}Registro – Paso 2{% endblock %}
+{% block title %}Registro – Paso 2 | SysAdmin{% endblock %}
 
 {% block content %}
-
-
-<div class="wrapper" style="height: 500px;">
+<div class="wrapper" style="max-width: 500px; margin: 40px auto;">
     <div class="form-box register">
-        <h2>Registro (Paso 2)</h2>
+        <h2 style="text-align: center; color: var(--color-primario); margin-bottom: 25px;">
+            <i class="ri-profile-line"></i> Registro (Paso 2/2)
+        </h2>
+        
         {% if error %}
-            <p style="color:red; text-align:center;">{{ error }}</p>
+            <div class="toast error" style="position: static; margin-bottom: 20px; width: 100%; opacity: 1;">
+                <i class="ri-error-warning-fill"></i>
+                <span>{{ error }}</span>
+            </div>
         {% endif %}
+
         <form action="" method="POST">
             {% csrf_token %}
-            <div class="input-box">
-                <span class="icon"><ion-icon name="person"></ion-icon></span>
-                <input type="text" name="NombreCompleto" required placeholder=" ">
-                <label>Nombre Completo</label>
+            
+            <div class="campo-form" style="margin-bottom: 20px;">
+                <label for="NombreCompleto"><i class="ri-user-settings-line"></i> Nombre Completo</label>
+                <input type="text" name="NombreCompleto" id="NombreCompleto" required placeholder="Nombre y Apellido">
             </div>
-            <div class="input-box">
-                <span class="icon"><ion-icon name="call"></ion-icon></span>
-                <input type="text" name="Telefono" maxlength="10" required placeholder=" ">
-                <label>Teléfono</label>
+            
+            <div class="campo-form" style="margin-bottom: 20px;">
+                <label for="Telefono"><i class="ri-phone-line"></i> Teléfono</label>
+                <input type="text" name="Telefono" id="Telefono" maxlength="10" required placeholder="A 10 dígitos">
             </div>
-            <div class="input-box">
-                <select name="Rol" required>
-                    <option value="">Rol</option>
-                    {% for r in roles %}
-                        <option value="{{ r }}">{{ r }}</option>
-                    {% endfor %}
-                </select>
+            
+            <div class="formulario-grid" style="margin-bottom: 30px;">
+                <div class="campo-form">
+                    <label for="Rol"><i class="ri-shield-user-line"></i> Rol</label>
+                    <select name="Rol" id="Rol" required>
+                        <option value="">Selecciona...</option>
+                        {% for r in roles %}
+                            <option value="{{ r }}">{{ r }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="campo-form">
+                    <label for="Estado"><i class="ri-toggle-line"></i> Estado</label>
+                    <select name="Estado" id="Estado" required>
+                        <option value="">Selecciona...</option>
+                        {% for e in estados %}
+                            <option value="{{ e }}">{{ e }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
-            <div class="input-box">
-                <select name="Estado" required>
-                    <option value="">Estado</option>
-                    {% for e in estados %}
-                        <option value="{{ e }}">{{ e }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <button type="submit" class="btn">Finalizar Registro</button>
+
+            <button type="submit" class="btn btn-primario" style="width: 100%; font-size: 1.1rem; padding: 12px;">
+                Finalizar Registro <i class="ri-check-double-line"></i>
+            </button>
         </form>
     </div>
 </div>
