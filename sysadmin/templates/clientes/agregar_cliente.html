@@ -1,93 +1,86 @@
 {% extends "base/base.html" %}
-{% load static %}
 
-{% block title %}Agregar Cliente{% endblock %}
-
-{% block extra_styles %}
-<link rel="stylesheet" href="{% static 'sysadmin/css/main.css' %}?v=3" />
-{% endblock %}
+{% block title %}Agregar Cliente | SysAdmin{% endblock %}
 
 {% block content %}
-<div class="contenedor contenedor-clientes">
-    <h1 class="titulo-principal">Agregar Cliente</h1>
-{% if messages %}
-    <div class='contenedor-mensajes'>
-        {% for message in messages %}
-            <div class='altert alert-{{ message.tag }}'>
-                {{ message }}
-            </div>
-        {% endfor %}
-    </div>
-{% endif %}
+<div class="contenedor">
+    <h1 class="titulo-principal"><i class="ri-user-add-fill"></i> Registrar Nuevo Cliente</h1>
 
     <div class="formulario-contenedor">
-        <form method="post" action="{% url 'agregar_cliente' %}" class="formulario-grid">
+        
+        {% if error %}
+            <div class="toast error" style="position: static; margin-bottom: 20px; width: 100%; opacity: 1;">
+                <i class="ri-error-warning-fill"></i>
+                <span>{{ error }}</span>
+            </div>
+        {% endif %}
+        
+        {% if mensaje %}
+            <div class="toast success" style="position: static; margin-bottom: 20px; width: 100%; opacity: 1;">
+                <i class="ri-checkbox-circle-fill"></i>
+                <span>{{ mensaje }}</span>
+            </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'agregar_cliente' %}">
             {% csrf_token %}
+            
+            <div class="formulario-grid">
+                <div class="campo-form">
+                    <label for="nombre"><i class="ri-user-line"></i> Nombre</label>
+                    <input type="text" id="nombre" name="nombre" class="sin-acentos" 
+                        placeholder="Ej. Juan" title="Solo letras sin acentos ni caracteres especiales" 
+                        pattern="[A-Za-z\s]+" required>
+                </div>
 
-            <div class="campo-form">
-                <label for="nombre">Nombre:</label>
-                <input type="text" id="nombre" name="nombre" placeholder="Ej. Juan" 
-                    title="Ingresa solo letras sin acentos ni caracteres especiales" 
-                    pattern="[A-Za-z\s]+" required>
+                <div class="campo-form">
+                    <label for="apellido"><i class="ri-user-line"></i> Apellido</label>
+                    <input type="text" id="apellido" name="apellido" class="sin-acentos" 
+                        placeholder="Ej. Ocegueda" title="Solo letras sin acentos ni caracteres especiales" 
+                        pattern="[A-Za-z\s]+" required>
+                </div>
+
+                <div class="campo-form">
+                    <label for="telefono"><i class="ri-phone-line"></i> Teléfono</label>
+                    <input type="text" id="telefono" name="telefono" maxlength="10" 
+                        placeholder="Ej. 5512345678" pattern="\d{10}" title="Ingresa exactamente 10 números" 
+                        required oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+
+                <div class="campo-form">
+                    <label for="correo"><i class="ri-mail-line"></i> Correo Electrónico</label>
+                    <input type="email" id="correo" name="correo" 
+                        placeholder="ejemplo@correo.com" title="Formato válido: nombre@dominio.com" required>
+                </div>
+
+                <div class="campo-form" style="grid-column: 1 / -1;">
+                    <label for="direccion"><i class="ri-map-pin-line"></i> Dirección</label>
+                    <input type="text" id="direccion" name="direccion" class="sin-acentos" 
+                        placeholder="Ej. Calle Principal 123, Colonia Centro" title="Evita acentos y caracteres especiales" 
+                        pattern="[A-Za-z0-9\s#\-.,]+" required>
+                </div>
             </div>
 
-            <div class="campo-form">
-                <label for="apellido">Apellido:</label>
-                <input type="text" id="apellido" name="apellido" placeholder="Ej. Ocegueda" 
-                    title="Ingresa solo letras sin acentos ni caracteres especiales" 
-                    pattern="[A-Za-z\s]+" required>
-            </div>
-
-            <div class="campo-form">
-                <!-- Campo de entrada para el teléfono (máximo 10 dígitos) -->
-                <label>Teléfono:</label>
-                <input type="text" name="telefono" maxlength="10" placeholder="(123)4567890" pattern="\d{10}" title="Ingresa 10 números" required oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-            </div>
-
-            <div class="campo-form">
-                <label for="correo">Correo:</label>
-                <input type="email" id="correo" name="correo" placeholder="ejemplo@correo.com" 
-                    title="Formato válido: nombre@dominio.com" required>
-            </div>
-
-            <div class="campo-form">
-                <label for="direccion">Dirección:</label>
-                <input type="text" id="direccion" name="direccion" placeholder="Ej. Calle 123, Ciudad" 
-                    title="Evita acentos y caracteres especiales" 
-                    pattern="[A-Za-z0-9\s#\-.,]+" required>
-            </div>
-
-            <input type="hidden" name="zona_horaria" id="zona_horaria_input">
-
-            <div class="campo-form boton-submit">
-                <button type="submit" class="btn-primario" title="Haz clic para guardar los datos del cliente">
-                    Agregar Cliente
+            <div class="boton-submit" style="margin-top: 30px;">
+                <button type="submit" class="btn btn-primario" style="width: 100%; font-size: 1.1rem; padding: 12px;">
+                    <i class="ri-save-line"></i> Guardar Cliente
                 </button>
             </div>
         </form>
     </div>
-
-    {% if mensaje %}
-        <p style="color: green; margin-top: 15px;">{{ mensaje }}</p>
-    {% endif %}
-
-    {% if error %}
-        <p style="color: red; margin-top: 15px;">{{ error }}</p>
-    {% endif %}
 </div>
+{% endblock %}
 
+{% block extra_scripts %}
 <script>
-    function eliminarAcentos(event) {
-        const sinAcentos = event.target.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        if (event.target.value !== sinAcentos) {
-            event.target.value = sinAcentos;
-        }
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-        const camposTexto = document.querySelectorAll("input[type='text']:not([name='telefono'])");
-        camposTexto.forEach(input => {
-            input.addEventListener("input", eliminarAcentos);
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll("input.sin-acentos").forEach(input => {
+            input.addEventListener("input", (e) => {
+                const sinAcentos = e.target.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                if (e.target.value !== sinAcentos) {
+                    e.target.value = sinAcentos;
+                }
+            });
         });
     });
 </script>

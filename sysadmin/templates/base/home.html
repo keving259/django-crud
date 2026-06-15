@@ -1,109 +1,55 @@
 {% extends "base/base.html" %}
 
-{% load static %}
-
-{% block title %}Inicio{% endblock %}
+{% block title %}Inicio | SysAdmin{% endblock %}
 
 {% block content %}
-<div class="wrapper">
-    <div class="form-box" styles="margin-top: 20px;">
-        <h2>Información de sesión</h2>
-        <p><strong>Usuario:</strong> {{ usuario }}</p>
-        <p><strong>Rol:</strong> {{ tipo }}</p>
-        <p><strong>Último login:</strong> {{ last_login }}</p>
-        <p><strong>Total de inicios de sesión:</strong> {{ total_login }}</p>
-        <p><strong>Hora UTC actual:</strong> {{ hora_utc_actual|date:"Y-m-d H:i:s" }} UTC</p>
+<div class="contenedor">
+    <h1 class="titulo-principal"><i class="ri-dashboard-3-fill"></i> Panel de Control</h1>
 
-        <form method="post" action="/logout/" class="logout-form">
+    <div class="formulario-contenedor" style="max-width: 600px; text-align: center; padding: 40px;">
+        <i class="ri-user-smile-line" style="font-size: 4.5rem; color: var(--color-primario);"></i>
+        <h2 style="margin: 15px 0; color: var(--color-primario);">¡Bienvenido, {{ usuario }}!</h2>
+        
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 25px; text-align: left; margin: 30px 0;">
+            <p style="margin-bottom: 15px; font-size: 1.1rem;">
+                <i class="ri-shield-star-line" style="color: var(--color-secundario); font-size: 1.3rem; vertical-align: middle;"></i> 
+                <strong>Rol del Sistema:</strong> {{ tipo }}
+            </p>
+            <p style="margin-bottom: 15px; font-size: 1.1rem;">
+                <i class="ri-calendar-check-line" style="color: var(--color-secundario); font-size: 1.3rem; vertical-align: middle;"></i> 
+                <strong>Último acceso:</strong> {{ last_login }}
+            </p>
+            <p style="margin-bottom: 15px; font-size: 1.1rem;">
+                <i class="ri-login-circle-line" style="color: var(--color-secundario); font-size: 1.3rem; vertical-align: middle;"></i> 
+                <strong>Total de inicios de sesión:</strong> {{ total_login }}
+            </p>
+            <p style="margin-bottom: 0; font-size: 1.1rem;">
+                <i class="ri-global-line" style="color: var(--color-secundario); font-size: 1.3rem; vertical-align: middle;"></i> 
+                <strong>Hora de conexión:</strong> <span id="hora-utc-home">{{ hora_utc_actual|date:"Y-m-d H:i:s" }}</span> UTC
+            </p>
+        </div>
+
+        <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
-            <button type="submit" id="btn-enviar" class="logout-btn">Cerrar sesión</button>
+            <button type="submit" class="btn btn-primario no-loader" style="background-color: #e74c3c; width: 100%; font-size: 1.1rem; padding: 12px;">
+                <i class="ri-logout-box-r-line"></i> Cerrar Sesión
+            </button>
         </form>
     </div>
 </div>
 {% endblock %}
 
-{% block extra_styles %}
-<style>
-    a {
-        color: #69f;
-        text-decoration: none;
-    }
-
-    .toast-container {
-        position: fixed;
-        top: 47px;
-        right: 20px;
-        z-index: 9999;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .toast {
-        background-color: #333;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 5px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        min-width: 250px;
-        font-weight: bold;
-        opacity: 0.95;
-        transform: translateY(-10px);
-        animation: fadeInDown 0.3s ease-out;
-        transition: opacity 0.5s ease;
-    }
-
-    .toast.success {
-        background-color: #27ae60;
-    }
-
-    .toast.error {
-        background-color: #c0392b;
-    }
-
-    .toast.warning {
-        background-color: #f39c12;
-    }
-
-    .toast.info {
-        background-color: #3498db;
-    }
-
-    @keyframes fadeInDown {
-        0% {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        100% {
-            opacity: 0.95;
-            transform: translateY(0);
-        }
-    }
-</style>
-{% endblock %}
-
 {% block extra_scripts %}
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Botón de cerrar sesión
-        const form = document.querySelector('form.logout-form');
-        const btn = document.getElementById('btn-enviar');
-
-        if (form && btn) {
-            form.addEventListener('submit', function () {
-                btn.disabled = true;
-                btn.innerText = 'Cerrando sesión...';
-            });
+    document.addEventListener('DOMContentLoaded', () => {
+        const spanHomeUTC = document.getElementById("hora-utc-home");
+        if (spanHomeUTC) {
+            setInterval(() => {
+                let fechaActual = new Date(spanHomeUTC.innerText + ' UTC');
+                fechaActual.setSeconds(fechaActual.getSeconds() + 1);
+                spanHomeUTC.innerText = fechaActual.toISOString().slice(0, 19).replace('T', ' ');
+            }, 1000);
         }
-
-        // Ocultar los toasts automáticamente
-        const toasts = document.querySelectorAll('.toast');
-        setTimeout(() => {
-            toasts.forEach(toast => {
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 500); // Eliminar después de desvanecer
-            });
-        }, 4000);
     });
 </script>
 {% endblock %}
