@@ -109,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (widgetReplicacion && textoReplicacion) {
         function verificarReplicacion() {
+            const originalFetch = window.fetch;
             originalFetch('/api/estado_replicacion/') 
                 .then(response => response.json())
                 .then(data => {

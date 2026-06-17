@@ -7,35 +7,34 @@
     <h1 class="titulo-principal"><i class="ri-history-line"></i> Auditoría de Clientes (Logs)</h1>
 
     <div class="formulario-contenedor" style="margin-bottom: 30px;">
-        <form method="post" class="formulario-grid">
-            {% csrf_token %}
-            <div class="campo-form">
-                <label for="fecha_inicio"><i class="ri-calendar-event-line"></i> Fecha inicio (UTC)</label>
-                <input type="datetime-local" id="fecha_inicio" name="fecha_inicio" required>
-            </div>
+    <form method="get" class="formulario-grid">
+        <div class="campo-form">
+            <label for="fecha_inicio"><i class="ri-calendar-event-line"></i> Fecha inicio (UTC)</label>
+            <input type="datetime-local" id="fecha_inicio" name="fecha_inicio" value="{{ fecha_inicio }}" required>
+        </div>
 
-            <div class="campo-form">
-                <label for="fecha_fin"><i class="ri-calendar-check-line"></i> Fecha fin (UTC)</label>
-                <input type="datetime-local" id="fecha_fin" name="fecha_fin" required>
-            </div>
+        <div class="campo-form">
+            <label for="fecha_fin"><i class="ri-calendar-check-line"></i> Fecha fin (UTC)</label>
+            <input type="datetime-local" id="fecha_fin" name="fecha_fin" value="{{ fecha_fin }}" required>
+        </div>
 
-            <div class="campo-form" style="grid-column: 1 / -1;">
-                <label for="tipo_operacion"><i class="ri-filter-3-line"></i> Tipo de operación</label>
-                <select name="tipo_operacion" id="tipo_operacion">
-                    <option value="todos">-- Todos --</option>
-                    <option value="insert">Insert</option>
-                    <option value="update">Update</option>
-                    <option value="delete">Delete</option>
-                </select>
-            </div>
+        <div class="campo-form" style="grid-column: 1 / -1;">
+            <label for="tipo_operacion"><i class="ri-filter-3-line"></i> Tipo de operación</label>
+            <select name="tipo_operacion" id="tipo_operacion">
+                <option value="todos" {% if tipo_operacion == 'todos' or not tipo_operacion %}selected{% endif %}>-- Todos --</option>
+                <option value="insert" {% if tipo_operacion == 'insert' %}selected{% endif %}>Insert</option>
+                <option value="update" {% if tipo_operacion == 'update' %}selected{% endif %}>Update</option>
+                <option value="delete" {% if tipo_operacion == 'delete' %}selected{% endif %}>Delete</option>
+            </select>
+        </div>
 
-            <div class="boton-submit" style="grid-column: 1 / -1; margin-top: 15px;">
-                <button type="submit" class="btn btn-primario no-loader">
-                    <i class="ri-search-line"></i> Buscar Logs
-                </button>
-            </div>
-        </form>
-    </div>
+        <div class="boton-submit" style="grid-column: 1 / -1; margin-top: 15px;">
+            <button type="submit" class="btn btn-primario no-loader">
+                <i class="ri-search-line"></i> Buscar Logs
+            </button>
+        </div>
+    </form>
+</div>
 
     {% if busqueda_realizada %}
         {% if resultados %}

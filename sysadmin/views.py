@@ -10,7 +10,7 @@ from django.conf import settings
 from functools import wraps
 from sysadmin.context_processors import estado_replicacion
 from .models import Log
-from .forms import FiltroLogForm, MiFormulario, LoginForm, ClientForm, CuentaForm, ModiciarClienteForm, ModificarCuentaForm, FiltroClienteForm, FiltroCuentasForm, FiltroLogsForm, SignupStep1Form, SignupStep2Form
+from .forms import MiFormulario, LoginForm, ClientForm, CuentaForm, ModiciarClienteForm, ModificarCuentaForm, FiltroClienteForm, FiltroCuentasForm, FiltroLogsForm, SignupStep1Form, SignupStep2Form
 from django.utils.timezone import now
 from .utils import get_client_ip, validar_ip, obtener_lag_replicacion
 from .services import autenticar_usuario_bd, buscar_logs_clientes_bd, obtener_estado_replicacion_bd, registrar_cliente_bd, registrar_cuenta_bd, obtener_sugerencias_clientes_bd, obtener_ids_clientes_bd, obtener_cliente_por_id_bd, modificar_cliente_bd, obtener_cuenta_por_id_bd, obtener_ids_cuentas_bd, modificar_cuenta_bd, buscar_clientes_bd, buscar_cuentas_bd, eliminar_cliente_bd, eliminar_cuenta_bd, buscar_logs_cuentas_bd, registrar_usuario_db
@@ -537,9 +537,9 @@ def consultar_logs_clientes(request):
 
     return render(request, "auditoria/consultar_logs_clientes.html", {
         "resultados": resultados,
-        "fecha_inicio": ('fecha_inicio', ''),
-        "fecha_fin": ('fecha_fin', ''),
-        "tipo_operacion": ('tipo_operacion', ''),
+        "fecha_inicio": request.GET.get('fecha_inicio', ''),
+        "fecha_fin": request.GET.get('fecha_fin', ''),
+        "tipo_operacion": request.GET.get('tipo_operacion', ''),
         "busqueda_realizada": busqueda_realizada,
     })
 

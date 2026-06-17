@@ -112,13 +112,6 @@ class FiltroClienteForm(forms.Form):
     direccion = forms.CharField(required=False)
     registro = forms.CharField(required=False)
 
-
-class FiltroLogForm(forms.Form):
-    fecha_inicio = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}))
-    fecha_fin = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}))
-    usuario = forms.ModelChoiceField(queryset=User.objects.all(), required=False, empty_label="Todos")
-    operacion = forms.ChoiceField(choices=OPERACIONES_CHOICES, required=False)
-    
 class MiFormulario(forms.Form):
     nombre = forms.CharField(max_length=100, required=True)
     correo = forms.EmailField(required=True)
@@ -131,16 +124,25 @@ class FiltroCuentasForm(forms.Form):
     correo = forms.CharField(required=False)
 
 class FiltroLogsForm(forms.Form):
-    fecha_inicio = forms.DateField(required=False)
-    fecha_fin = forms.DateField(required=False)
-    tipo_operacion = forms.ChoiceField(required=False)
+    FORMATOS_ACEPTADOS = ['%Y-%m-%dT%H:%M', '%Y-%m-%d %H:%M:%S', '%Y-%m-%d %H:%M']
+    fecha_inicio = forms.DateField(input_formats=FORMATOS_ACEPTADOS, required=True)
+    fecha_fin = forms.DateField(input_formats=FORMATOS_ACEPTADOS, required=True)
+    
+    OPCIONES_TIPO = [
+        ('todos', '-- Todos --'),
+        ('insert', 'Insert'),
+        ('update', 'Update'),
+        ('delete', 'Delete')
+    ]
+    
+    tipo_operacion = forms.ChoiceField(choices=OPCIONES_TIPO, required=False, initial='todos')
     
     def clean(self):
         cleaned_data = super().clean()
         fecha_inicio = cleaned_data.get('fecha_inicio')
         fecha_fin = cleaned_data.get('fecha_fin')
         
-        if (fecha_inicio and not fecha_fin) or (not fecha_inicio and fecha_fin):
+        if fecha_inicio and fecha_fin and fecha_inicio > fecha_fin:
             raise forms.ValidationError("La fecha de inicio no puede ser posterior a la fecha de fin.")
         
         return cleaned_data

@@ -144,7 +144,7 @@ def eliminar_cuenta_bd(id_cuenta, modified_by, zona_horaria, ip_cliente):
 def buscar_logs_clientes_bd(fecha_inicio, fecha_fin, tipo_operacion):
     results = []
     try:
-        with connections as cursor:
+        with connection.cursor() as cursor:
             cursor.callproc('buscar_logs_clientes', [fecha_inicio, fecha_fin, tipo_operacion])
             
             rows = [col[0] for col in cursor.description]
@@ -171,7 +171,7 @@ def buscar_logs_clientes_bd(fecha_inicio, fecha_fin, tipo_operacion):
 def buscar_logs_cuentas_bd(fecha_inicio, fecha_fin, tipo_operacion):
     results = []
     try:
-        with connections['replica'].cursor() as cursor:
+        with connection.cursor() as cursor:
             cursor.callproc('buscar_logs_cuentas', [fecha_inicio, fecha_fin, tipo_operacion])
             
             rows = [col[0] for col in cursor.description]
