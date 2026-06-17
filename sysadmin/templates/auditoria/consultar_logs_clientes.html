@@ -1,67 +1,54 @@
 {% extends 'base/base.html' %}
-{% load static %}
 
-{% block title %}Consultar Logs de Clientes{% endblock %}
-
-{% block extra_styles %}
-<link rel="stylesheet" href="{% static 'sysadmin/css/main.css' %}" />
-<style>
-    .lista-valores {
-        list-style-type: none;
-        padding-left: 0;
-        margin: 0;
-    }
-    .lista-valores li {
-        margin-bottom: 4px;
-    }
-</style>
-{% endblock %}
+{% block title %}Auditoría de Clientes | SysAdmin{% endblock %}
 
 {% block content %}
-<main class="contenedor contenedor-clientes">
-    <h1 class="titulo-principal">Consultar Logs de Clientes</h1>
+<div class="contenedor">
+    <h1 class="titulo-principal"><i class="ri-history-line"></i> Auditoría de Clientes (Logs)</h1>
 
-    <div class="formulario-contenedor" style="max-width: 500px;">
+    <div class="formulario-contenedor" style="margin-bottom: 30px;">
         <form method="post" class="formulario-grid">
             {% csrf_token %}
             <div class="campo-form">
-                <label for="fecha_inicio">Fecha de inicio (UTC):</label>
+                <label for="fecha_inicio"><i class="ri-calendar-event-line"></i> Fecha inicio (UTC)</label>
                 <input type="datetime-local" id="fecha_inicio" name="fecha_inicio" required>
             </div>
 
             <div class="campo-form">
-                <label for="fecha_fin">Fecha de fin (UTC):</label>
+                <label for="fecha_fin"><i class="ri-calendar-check-line"></i> Fecha fin (UTC)</label>
                 <input type="datetime-local" id="fecha_fin" name="fecha_fin" required>
             </div>
 
-            <div class="campo-form">
-                <label for="tipo_operacion">Tipo de operación:</label>
+            <div class="campo-form" style="grid-column: 1 / -1;">
+                <label for="tipo_operacion"><i class="ri-filter-3-line"></i> Tipo de operación</label>
                 <select name="tipo_operacion" id="tipo_operacion">
                     <option value="todos">-- Todos --</option>
                     <option value="insert">Insert</option>
                     <option value="update">Update</option>
+                    <option value="delete">Delete</option>
                 </select>
             </div>
 
-            <div class="campo-form boton-submit" style="grid-column: 1 / -1;">
-                <button type="submit" class="btn-primario">Buscar</button>
+            <div class="boton-submit" style="grid-column: 1 / -1; margin-top: 15px;">
+                <button type="submit" class="btn btn-primario no-loader">
+                    <i class="ri-search-line"></i> Buscar Logs
+                </button>
             </div>
         </form>
     </div>
 
     {% if busqueda_realizada %}
-    {% if resultados %}
-        <section style="margin-top: 30px;">
-            <h2 class="titulo-secundario">Resultados:</h2>
+        {% if resultados %}
+            <h2 class="titulo-secundario"><i class="ri-list-check-2"></i> Resultados de la búsqueda:</h2>
             <div class="tabla-contenedor">
                 <table class="tabla-datos">
                     <thead>
                         <tr>
-                            <th>IDLog</th>
-                            <th>Usuario</th>
-                            <th>Fecha</th>
-                            <th>IP</th>
-                            <th>Tipo</th>
+                            <th><i class="ri-hashtag"></i> ID</th>
+                            <th><i class="ri-user-settings-line"></i> Usuario</th>
+                            <th><i class="ri-time-line"></i> Fecha (Local)</th>
+                            <th><i class="ri-global-line"></i> IP</th>
+                            <th><i class="ri-settings-4-line"></i> Tipo</th>
                             <th>Valores Anteriores</th>
                             <th>Valores Nuevos</th>
                         </tr>
@@ -69,33 +56,37 @@
                     <tbody>
                         {% for row in resultados %}
                         <tr>
-                            <td>{{ row.IDLog }}</td>
+                            <td><strong>{{ row.IDLog }}</strong></td>
                             <td>{{ row.Usuario }}</td>
-                            <td>{{ row.Fecha }}</td>
-                            <td>{{ row.IP }}</td>
-                            <td>{{ row.TipoDeOperacion }}</td>
-
+                            <td class="fecha-utc">{{ row.Fecha }}</td>
+                            <td><span style="font-family: monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">{{ row.IP }}</span></td>
                             <td>
+                                <span class="badge {% if row.TipoDeOperacion == 'insert' %}online{% elif row.TipoDeOperacion == 'update' %}warning{% else %}offline{% endif %}">
+                                    {{ row.TipoDeOperacion|upper }}
+                                </span>
+                            </td>
+
+                            <td style="font-size: 0.9rem;">
                                 {% if row.ValoresAnteriores %}
-                                    <ul class="lista-valores">
+                                    <ul style="list-style: none; padding: 0; margin: 0;">
                                         {% for k, v in row.ValoresAnteriores %}
-                                            <li><strong>{{ k }}:</strong> {{ v }}</li>
+                                            <li style="margin-bottom: 4px;"><strong style="color: #475569;">{{ k }}:</strong> {{ v }}</li>
                                         {% endfor %}
                                     </ul>
                                 {% else %}
-                                    —
+                                    <span style="color: #94a3b8;">—</span>
                                 {% endif %}
                             </td>
 
-                            <td>
+                            <td style="font-size: 0.9rem;">
                                 {% if row.ValoresNuevos %}
-                                    <ul class="lista-valores">
+                                    <ul style="list-style: none; padding: 0; margin: 0;">
                                         {% for k, v in row.ValoresNuevos %}
-                                            <li><strong>{{ k }}:</strong> {{ v }}</li>
+                                            <li style="margin-bottom: 4px;"><strong style="color: #475569;">{{ k }}:</strong> {{ v }}</li>
                                         {% endfor %}
                                     </ul>
                                 {% else %}
-                                    —
+                                    <span style="color: #94a3b8;">—</span>
                                 {% endif %}
                             </td>
                         </tr>
@@ -103,66 +94,37 @@
                     </tbody>
                 </table>
             </div>
-        </section>
+        {% else %}
+            <div class="formulario-contenedor" style="text-align: center; padding: 40px; margin-top: 30px;">
+                <i class="ri-file-search-line" style="font-size: 3rem; color: #a0aec0;"></i>
+                <h3 style="color: #4a5568; margin-top: 10px;">No se encontraron registros</h3>
+                <p style="color: #718096;">Intenta ampliar el rango de fechas o cambiar el tipo de operación.</p>
+            </div>
+        {% endif %}
     {% endif %}
-</main>
+</div>
 {% endblock %}
-
 
 {% block extra_scripts %}
 <script>
-    function eliminarAcentos(event) {
-    const sinAcentos = event.target.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if (event.target.value !== sinAcentos) {
-        event.target.value = sinAcentos;
-    }
-}
+    document.addEventListener('DOMContentLoaded', () => {
+        // Conversión a prueba de fallos de UTC a Local
+        const zonaHoraria = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const opcionesFormato = {
+            year: 'numeric', month: 'short', day: 'numeric',
+            hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true,
+            timeZone: zonaHoraria
+        };
 
-// Cuando la página esté lista
-document.addEventListener('DOMContentLoaded', () => {
-    const inputsTexto = document.querySelectorAll("input[type='text']");
-    inputsTexto.forEach(input => {
-        input.addEventListener("input", eliminarAcentos);
-    });
-
-    // Detectar zona horaria
-    const zonaHoraria = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const diferenciaMinutos = new Date().getTimezoneOffset();
-    const diferenciaHoras = -diferenciaMinutos / 60;
-
-    console.log("Zona horaria detectada:", zonaHoraria);
-    console.log("Diferencia con UTC:", diferenciaHoras + " horas");
-
-    // Opciones de formato local
-    const opcionesFormato = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true,
-        timeZone: zonaHoraria,
-    };
-
-    // Convertir fechas de la tabla a hora local
-    const filas = document.querySelectorAll("table.tabla-datos tbody tr");
-    filas.forEach(fila => {
-        const celdaFecha = fila.cells[2]; // Tercera celda (Fecha)
-        if (celdaFecha) {
-            let textoOriginal = celdaFecha.textContent.trim();
-            textoOriginal = textoOriginal.replace("a.m.", "AM").replace("p.m.", "PM");
-
-            const fechaUTC = new Date(textoOriginal + " UTC");
+        document.querySelectorAll("td.fecha-utc").forEach(celda => {
+            let textoOriginal = celda.textContent.trim().replace("a.m.", "AM").replace("p.m.", "PM");
+            if (!textoOriginal || textoOriginal === 'None') return;
+            
+            const fechaUTC = new Date(textoOriginal + ' UTC');
             if (!isNaN(fechaUTC)) {
-                const fechaLocal = new Intl.DateTimeFormat('es-MX', opcionesFormato).format(fechaUTC);
-                celdaFecha.textContent = fechaLocal;
-            } else {
-                console.warn("No se pudo convertir la fecha:", textoOriginal);
+                celda.textContent = new Intl.DateTimeFormat('es-MX', opcionesFormato).format(fechaUTC);
             }
-        }
+        });
     });
-});
-
 </script>
 {% endblock %}

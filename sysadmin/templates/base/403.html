@@ -1,13 +1,21 @@
 <!-- Si el rol no tiene permisos para ver un vista se le redirigie aquí-->
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Acceso Denegado</title>
-</head>
-<body>
-    <h1>Acceso Denegado</h1>
-    <p>{{ mensaje }}</p>
-    <a href="{{ volver_a }}">Volver</a>
-</body>
-</html>
+{% extends "base/base.html" %}
+
+{% block title %}Acceso Denegado | SysAdmin{% endblock %}
+
+{% block content %}
+<div class="contenedor" style="display: flex; justify-content: center; align-items: center; min-height: 60vh;">
+    <divclass="formulario-contenedor" style="text-align: center; padding: 50px; border-top: 5px solid #e74c3c; max-width: 500px;">
+        <i class="ri-shield-keyhole-fill" style="font-size: 5rem; color: #e74c3c;"></i>
+        <h1 style="color: #2c3e50; margin-top: 20px; margin-bottom: 15px;">Acceso Denegado</h1>
+        
+        <p style="color: #7f8c8d; font-size: 1.1rem; margin-bottom: 30px;">
+            {{ mensaje|default:"No tienes los permisos necesarios para ver esta sección." }}
+        </p>
+        
+        <a href="{{ volver_a|default:'/home/' }}" class="btn btn-primario" style="text-decoration: none; display: inline-block; padding: 12px 25px;">
+            <i class="ri-arrow-go-back-line"></i> Volver a una zona segura
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -394,7 +394,7 @@ def consultas_clientes(request):
         **campos
     })
 
-@rol_requerido(['Master', 'Programador', 'Sistema', 'Lector'])
+@rol_requerido(['Master', 'Programador', 'Lector'])
 @never_cache
 def consultas_cuentas(request):
     datos = []
@@ -535,7 +535,7 @@ def consultar_logs_clientes(request):
                 for error in form.errors.values():
                     messages.warning(request, error[0])
 
-    return render(request, "consultar_logs_clientes.html", {
+    return render(request, "auditoria/consultar_logs_clientes.html", {
         "resultados": resultados,
         "fecha_inicio": ('fecha_inicio', ''),
         "fecha_fin": ('fecha_fin', ''),
@@ -547,28 +547,30 @@ def consultar_logs_clientes(request):
 @never_cache
 def consultar_logs_cuentas(request):
     resultados = []
+    busqueda_realizada = False
 
     if request.GET:
         form = FiltroLogsForm(request.GET)
         
-    if form.is_valid():
-        datos = form.cleaned_data
-        fecha_inicio = datos.get('fecha_inicio')
-        fecha_fin = datos.get('fecha_fin')
-        
-        if fecha_inicio and fecha_fin:
-            try:
-                resultados = buscar_logs_cuentas_bd(
-                    fecha_inicio,
-                    fecha_fin,
-                    datos.get('tipo_operacion', '')
-                )
-                
-                if not resultados:
-                    messages.info(request, 'No se encontraron registros que coincidan con los criterios de búsqueda.')
-            except:
-                messages.error(request, 'Ocurrió un error inesperado al realizar la búsqueda. Por favor, intenta nuevamente.')
-                
+        if form.is_valid():
+            datos = form.cleaned_data
+            fecha_inicio = datos.get('fecha_inicio')
+            fecha_fin = datos.get('fecha_fin')
+            
+            if fecha_inicio and fecha_fin:
+                busqueda_realizada = True
+                try:
+                    resultados = buscar_logs_cuentas_bd(
+                        fecha_inicio,
+                        fecha_fin,
+                        datos.get('tipo_operacion', '')
+                    )
+                    
+                    if not resultados:
+                        messages.info(request, 'No se encontraron registros que coincidan con los criterios de búsqueda.')
+                except Exception as e:
+                    messages.error(request, 'Ocurrió un error inesperado al realizar la búsqueda. Por favor, intenta nuevamente.')
+                    
         else:
             for error in form.errors.values():
                 messages.warning(request, error[0])
@@ -691,7 +693,7 @@ def acceso_denegado(request):
         mensaje = "Debes iniciar sesión para acceder a esta página."
         destino = "/login/"
 
-    return render(request, '403.html', {
+    return render(request, 'base/403.html', {
         'mensaje': mensaje,
         'volver_a': destino
     })
