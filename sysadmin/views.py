@@ -654,6 +654,10 @@ def signup_step2(request):
         'estados' : [estado[0] for estado in SignupStep2Form.ESTADOS],
     })
 
+def cerrar_sesion(request):
+    request.session.flush()
+    return redirect('login')
+
 @never_cache
 @rol_requerido(['Master', 'Sistema'])
 def ver_lag_replicacion(request):

@@ -1,6 +1,7 @@
 /*VARIABLES Y REINICIOS GLOBALES*/
 :root {
     --color-primario: #162938;
+    --color-primario-oscuro: #1a202c;
     --color-secundario: #007bff;
     --color-fondo: #f9fbff;
     --color-texto: #333333;
@@ -37,14 +38,14 @@ body {
 HEADER Y NAVEGACIÓN
 ========================================= */
 .main-header {
-    position: fixed;
+    position: sticky;
     top: 0;
     left: 0;
     width: 100%;
-    background-color: var(--color-primario);
+    background-color: var(--color-primario-oscuro);
     color: var(--color-blanco);
     box-shadow: var(--sombra-header);
-    z-index: 1000;
+    z-index: 999;
     padding: 12px 30px;
 }
 
@@ -131,9 +132,8 @@ HEADER Y NAVEGACIÓN
 CONTENEDOR PRINCIPAL
 ========================================= */
 .main-content {
-    margin-top: 90px; /* Compensa el header fijo */
-    padding: 2rem;
-    flex: 1;
+    margin-top: 20px; /* Compensa el header fijo */
+    padding: 1rem;
 }
 
 .titulo-principal {
@@ -264,7 +264,7 @@ WIDGETS Y ALERTAS (TOASTS)
 ========================================= */
 .toast-container {
     position: fixed;
-    top: 90px;
+    bottom: 70px;
     right: 20px;
     z-index: 9999;
     display: flex;
@@ -275,14 +275,47 @@ WIDGETS Y ALERTAS (TOASTS)
 .toast {
     min-width: 250px;
     color: var(--color-blanco);
-    padding: 15px 20px;
+    padding: 14px 40px 14px 16px;
     border-radius: var(--borde-radio);
     box-shadow: var(--sombra-suave);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     opacity: 1;
     transition: opacity 0.5s ease;
+    position: relative;
+}
+
+.toast-close {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.6;
+    font-size: 1.2rem;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    transition: opacity 0.2s ease;
+}
+
+.toast-close:hover {
+    opacity: 1;
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .toast.success { background-color: var(--color-exito); }
@@ -353,11 +386,74 @@ LOADER SPINNER
 }
 
 /* =========================================
+MENU-TOGGLE
+========================================= */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--color-primario);
+    padding: 5px;
+}
+
+@keyframes deslizarAbajo {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
 MEDIA QUERIES
 ========================================= */
 @media (max-width: 768px) {
-    .header-top { flex-direction: column; gap: 10px; }
-    .nav-list { justify-content: center; }
-    .main-content { margin-top: 130px; padding: 1rem; }
     .boton-submit { justify-content: center; }
+
+    .header-top {
+        flex-direction: row;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        padding: 5px 10px;
+    }
+
+    .nav-menu {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+    }
+
+    .main-content {
+        margin-top: 20px;
+        padding: 1rem;
+    }
+    
+    .menu-toggle { 
+        display: block !important; 
+        color: white !important;
+    }
+
+    .nav-list {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: var(--color-blanco);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        padding: 10px 0;
+        z-index: 9999;
+    }
+
+    .nav-list.active {
+        display: flex !important;
+        animation: deslizarAbajo 0.3s ease;
+    }
+
+    .nav-list li {
+        width: 100%;
+        text-align: center;
+        margin: 10px 0;
+    }
 }

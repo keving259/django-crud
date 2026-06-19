@@ -82,14 +82,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // CIERRE MANUAL DE NOTIFICACIONES TOAST ---
+    const botonesCerrar = document.querySelectorAll('.toast-close');
+    botonesCerrar.forEach(boton => {
+        boton.addEventListener('click', (e) => {
+            const toast = e.target.closest('.toast');
+            if (toast) {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                setTimeout(() => toast.remove(), 300);
+            }
+        });
+    })
+
     // CIERRE AUTOMÁTICO DE NOTIFICACIONES TOAST ---
-    const toastContainer = document.getElementById('toast-container');
-    if (toastContainer) {
+    const toastExistentes = document.querySelectorAll('.toast');
+    if (toastExistentes.length > 0) {
         setTimeout(() => {
-            toastContainer.style.transition = "opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1)";
-            toastContainer.style.opacity = '0';
-            setTimeout(() => toastContainer.remove(), 600);
-        }, 4000);
+            toastExistentes.forEach(toast =>  {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                setTimeout(() => toast.remove(), 300);
+            });
+        }, 5000);
     }
 
     //  RELOJ DINÁMICO UTC ---
@@ -134,5 +149,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         verificarReplicacion();
         setInterval(verificarReplicacion, 30000);
+    }
+
+    // --- LÓGICA DEL MENÚ HAMBURGUESA ---
+    const menuToggle = document.getElementById('menu-toggle');
+    const navLinks = document.getElementById('nav-links');
+
+    if (menuToggle && navLinks) {
+        const iconMenu = menuToggle.querySelector('i');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+
+            if (navLinks.classList.contains('active')) {
+                iconMenu.classList.remove('ri-menu-line');
+                iconMenu.classList.add('ri-close-line');
+            } else {
+                iconMenu.classList.remove('ri-close-line');
+                iconMenu.classList.add('ri-menu-line');
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!navLinks.contains(e.target) && !menuToggle.contains(e.target)) {
+                navLinks.classList.remove('active');
+                iconMenu.classList.remove('ri-close-line');
+                iconMenu.classList.add('ri-menu-line');
+            }
+        });
     }
 });
