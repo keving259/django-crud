@@ -148,20 +148,10 @@ class FiltroLogsForm(forms.Form):
         return cleaned_data
 
 class SignupStep1Form(forms.Form):
-    ROLES = [
-        ('Master', 'Master'), 
-        ('Sistema', 'Sistema'), 
-        ('Lector', 'Lector')
-    ]
-    ESTADOS = [
-        ('Activo', 'Activo'),
-        ('Inactivo', 'Inactivo')
-    ]
-    
-    NombreCompleto = forms.CharField(required=True)
-    Telefono = forms.CharField(required=True)
-    Rol = forms.ChoiceField(choices=ROLES, required=True)
-    Estado = forms.ChoiceField(choices=ESTADOS, required=True)
+    NombreDeUsuario = forms.CharField(max_length=150, required=True)
+    CorreoElectronico = forms.EmailField(required=True)
+    Pass = forms.CharField(widget=forms.PasswordInput(), required=True)
+    zona_horaria = forms.CharField(max_length=100, required=True)
 
 class SignupStep2Form(forms.Form):
     ROLES = [
@@ -174,7 +164,7 @@ class SignupStep2Form(forms.Form):
         ('Inactivo', 'Inactivo')
     ]
     
-    NombreCompleto = forms.CharField(required=True)
-    Telefono = forms.CharField(required=True)
+    NombreCompleto = forms.CharField(max_length=255, required=True)
+    Telefono = forms.CharField(max_length=20, required=True)
     Rol = forms.ChoiceField(choices=ROLES, required=True)
     Estado = forms.ChoiceField(choices=ESTADOS, required=True)

@@ -199,8 +199,7 @@ def buscar_logs_cuentas_bd(fecha_inicio, fecha_fin, tipo_operacion):
 def registrar_usuario_db(nombre_usuario, nombre_completo, correo, telefono, password, rol, estado, created_by, zona, ip):
     with connections['default'].cursor() as cursor:
         cursor.execute("""
-            CALL agregar_usuario(%s, %s, %s, %s, %s, %s, %s, %s, %s);
-            )
+            CALL agregar_usuario(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         """, [nombre_usuario, nombre_completo, correo, telefono, password, rol, estado, created_by, zona, ip])
 
 def obtener_estado_replicacion_bd():

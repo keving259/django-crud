@@ -1,5 +1,7 @@
 {% extends "base/base.html" %}
 
+{% load static %}
+
 {% block title %}Registro – Paso 2 | SysAdmin{% endblock %}
 
 {% block content %}
@@ -57,4 +59,8 @@
         </form>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'sysadmin/js/script.js' %}"></script>
 {% endblock %}
