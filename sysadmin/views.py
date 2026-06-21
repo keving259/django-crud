@@ -1,16 +1,14 @@
 from django.shortcuts import render, redirect
-from django.db import connection, connections
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.conf import settings
 from functools import wraps
-from sysadmin.context_processors import estado_replicacion
-from .models import Log
-from .forms import MiFormulario, LoginForm, ClientForm, CuentaForm, ModiciarClienteForm, ModificarCuentaForm, FiltroClienteForm, FiltroCuentasForm, FiltroLogsForm, SignupStep1Form, SignupStep2Form
+import urllib.parse
+from django.urls import reverse
+import time
+from .forms import LoginForm, ClientForm, CuentaForm, ModiciarClienteForm, ModificarCuentaForm, FiltroClienteForm, FiltroCuentasForm, FiltroLogsForm, SignupStep1Form, SignupStep2Form
 from django.utils.timezone import now
 from .utils import get_client_ip, validar_ip, obtener_lag_replicacion
 from .services import autenticar_usuario_bd, buscar_logs_clientes_bd, obtener_estado_replicacion_bd, registrar_cliente_bd, registrar_cuenta_bd, obtener_sugerencias_clientes_bd, obtener_ids_clientes_bd, obtener_cliente_por_id_bd, modificar_cliente_bd, obtener_cuenta_por_id_bd, obtener_ids_cuentas_bd, modificar_cuenta_bd, buscar_clientes_bd, buscar_cuentas_bd, eliminar_cliente_bd, eliminar_cuenta_bd, buscar_logs_cuentas_bd, registrar_usuario_db
@@ -20,10 +18,27 @@ def rol_requerido(roles):
         @wraps(vista_funcion)
         def wrapper(request, *args, **kwargs):
             if "id_usuario" not in request.session:
-                return redirect('/login/?mensaje=Tu sesión ha expirado por inactividad.')
-            tipo = request.session.get('tipo')
+                mensaje = 'Por favor, inicia sesión para continuar.'
+                ruta_actual = request.path
+                
+                query_params = urllib.parse.urlencode({'mensaje': mensaje, 'next': ruta_actual})
+                return redirect(f'{reverse('login')}?{query_params}')
             
-            if tipo not in roles:
+            tiempo_actual = time.time()
+            ultimo_acceso = request.session.get('ultimo_acceso', tiempo_actual)
+            limite_inactividad = 600 # 10 minutos
+            
+            if (tiempo_actual - ultimo_acceso) > limite_inactividad:
+                request.session.flush()
+                mensaje = 'Tu sesión ha expirado por inactividad. Vuelve a ingresar.'
+                ruta_actual = request.path
+                query_params = urllib.parse.urlencode({'mensaje': mensaje, 'next': ruta_actual})
+                return redirect(f"{reverse('login')}?{query_params}")
+            
+            request.session['ultimo_acceso'] = tiempo_actual
+            
+            tipo_usuario = request.session.get('tipo')
+            if tipo_usuario not in roles:
                 return redirect('acceso_denegado')
             return vista_funcion(request, *args, **kwargs)
         return wrapper
@@ -59,6 +74,7 @@ def logout(request):
 @never_cache
 def login(request):
     mensaje = request.GET.get('mensaje')
+    next_url = request.POST.get('next', '')
 
     if request.method == 'POST':
         request.session.flush()
@@ -87,12 +103,20 @@ def login(request):
                 request.session['total_login'] = resultado_json.get('Total_Login')
 
                 messages.success(request, "Inicio de sesión exitoso! Bienvenido/a")
-                return redirect('home')
+                
+                url_destino = request.POST.get('next') or request.GET.get('next')
+                
+                if url_destino:
+                    return redirect(url_destino)
+                else:
+                    return redirect('home')
+            
             else:
                 return render(request, 'auth/login.html', {
                     'error': resultado_json.get("Estado"),
                     'estado': 'login fallido',
-                    'mensaje': mensaje
+                    'mensaje': mensaje,
+                    'next_url' : next_url
                 })
         else:
             print("[DEBUG] El formulario es INVÁLIDO. Errores:", form.errors)
@@ -102,7 +126,8 @@ def login(request):
             return render(request, 'auth/login.html', {
                 'error' : first_error,
                 'estado' : 'datos_invalidos',
-                'mensaje' : mensaje
+                'mensaje' : mensaje,
+                'next_url' : next_url
             })
 
     return render(request, 'auth/login.html', { 'mensaje': mensaje })

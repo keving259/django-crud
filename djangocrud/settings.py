@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Tiempo max se sesión por inactividad en segundos
-SESSION_COOKIE_AGE = 600  # 10 minutos
+SESSION_COOKIE_AGE = 86400 # 24 horas
 
 # Reinicia el contador de inactividad con cada request
 SESSION_SAVE_EVERY_REQUEST = True

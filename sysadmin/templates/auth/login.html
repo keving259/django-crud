@@ -5,6 +5,11 @@
 {% block header %}{% endblock %}
 
 {% block content %}
+<form method="POST" action="">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next_url }}">
+</form>
+
 <div class="wrapper" style="max-width: 450px; margin: 40px auto;">
     <div class="form-box login">
         <h2 style="text-align: center; color: var(--color-primario); margin-bottom: 25px;">
