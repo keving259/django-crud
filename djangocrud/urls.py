@@ -21,3 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('sysadmin.urls')), 
 ]
+
+handler400 = 'sysadmin.views.error_400_view'
+handler404 = 'sysadmin.views.error_404_view'
+handler500 = 'sysadmin.views.error_500_view'

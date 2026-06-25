@@ -78,7 +78,6 @@ def login(request):
 
     if request.method == 'POST':
         request.session.flush()
-        print('Datos recibidos de POST: ', request.POST)
         form = LoginForm(request.POST)
 
         if form.is_valid():
@@ -714,15 +713,32 @@ def estado_sesion(request):
     else:
         return JsonResponse({'estado': 'inactivo'})
 
+# Error 403
 def acceso_denegado(request):
     mensaje = "No tienes permisos para acceder a esta página."
     destino = "home"
 
     if not request.session.get('usuario'):
         mensaje = "Debes iniciar sesión para acceder a esta página."
-        destino = "/login/"
+        destino = "/home/"
 
     return render(request, 'base/403.html', {
         'mensaje': mensaje,
         'volver_a': destino
     })
+
+
+def renderizar_error(request, codigo, mensaje):
+    return render(request, 'base/error.html', {
+        'codigo': codigo,
+        'mensaje': mensaje
+    }, status=codigo)
+
+def error_400_view(request, exception):
+    return renderizar_error(request, 400, "La petición al servidor fue incorrecta o está corrupta.")
+
+def error_404_view(request, exception):
+    return renderizar_error(request, 404, "La página o el recurso que estás buscando no existe o fue movido.")
+
+def error_500_view(request):
+    return renderizar_error(request, 500, "Error interno del servidor.")

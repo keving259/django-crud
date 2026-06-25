@@ -116,22 +116,22 @@ WSGI_APPLICATION = 'djangocrud.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'caja_de_ahorro',
-        'USER': 'root',
+        'NAME': os.environ.get('DB_NAME', 'caja_de_ahorro'),
+        'USER': os.environ.get('DB_USER', 'root'),
         'PASSWORD' : os.environ.get('DB_PASSWORD'),
-        'HOST' : '127.0.0.1', # Master IP
-        'PORT': '3306',
+        'HOST' : os.environ.get('DB_HOST_MASTER', '127.0.0.1'), # Master IP
+        'PORT': os.environ.get('DB_PORT', '3306'),
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         }
     },
     'replica' : {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'caja_de_ahorro',
-        'USER': 'root',
+        'NAME': os.environ.get('DB_NAME', 'caja_de_ahorro'),
+        'USER': os.environ.get('DB_USER', 'root'),
         'PASSWORD' : os.environ.get('DB_PASSWORD'),
-        'HOST' : '127.0.0.1', # Slave IP
-        'PORT': '3306',
+        'HOST': os.environ.get('DB_HOST_REPLICA', '127.0.0.1'), # Slave IP
+        'PORT': os.environ.get('DB_PORT', '3306'),
     }
 }
 

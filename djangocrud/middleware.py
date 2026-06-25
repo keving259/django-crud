@@ -9,7 +9,7 @@ class ManejoErrorConexionDBMiddleware:
         try:
             connections['default'].cursor()
         except OperationalError:
-            return render(request, 'base/error_db.html', status=503)
+            return render(request, 'base/error.html', status=503)
         
         response = self.get_response(request)
         return response
