@@ -21,13 +21,13 @@
     {% endif %}
 
     {% if tipo == "Master" %}
-        <div class="formulario-contenedor" style="max-width: 500px; margin-bottom: 40px; background-color: #f1f5f9; border: 1px dashed #cbd5e1;">
+        <div class="formulario-contenedor" style="max-width: 500px; margin-bottom: 40px;">
             <form method="post" style="display: flex; gap: 15px; align-items: flex-end;">
                 {% csrf_token %}
                 <div class="campo-form" style="flex: 1; margin-bottom: 0;">
                     <label for="id_cliente"><i class="ri-search-eye-line"></i> Buscar por ID de Cliente</label>
                     <input type="number" id="id_cliente" name="id_cliente" list="lista_id_clientes" required 
-                           placeholder="Ej: 101" title="Ingresa el ID numérico del cliente" value="{{ cliente.IDCliente|default:'' }}">
+                        placeholder="Ej: 101" title="Ingresa el ID numérico del cliente" value="{{ cliente.IDCliente|default:'' }}">
                     <datalist id="lista_id_clientes">
                         {% for id in clientes_ids %}
                             <option value="{{ id }}">

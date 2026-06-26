@@ -6,7 +6,7 @@
 <div class="contenedor">
     <h1 class="titulo-principal"><i class="ri-file-shield-2-line"></i> Auditoría de Cuentas (Logs)</h1>
 
-    <div class="formulario-contenedor" style="margin-bottom: 30px;">
+    <div class="formulario-contenedor">
         <form method="get" class="formulario-grid">
             <div class="campo-form">
                 <label for="fecha_inicio"><i class="ri-calendar-event-line"></i> Fecha inicio (UTC)</label>
@@ -39,7 +39,7 @@
     {% if resultados %}
         <h2 class="titulo-secundario"><i class="ri-list-check-2"></i> Resultados de la búsqueda:</h2>
         <div class="tabla-contenedor">
-            <table class="tabla-datos">
+            <table class="tabla-datos tabla-logs">
                 <thead>
                     <tr>
                         <th><i class="ri-hashtag"></i> ID</th>
@@ -54,12 +54,12 @@
                 <tbody>
                     {% for row in resultados %}
                     <tr>
-                        <td><strong>{{ row.IDLog }}</strong></td>
+                        <td>{{ row.IDLog }}</td>
                         <td>{{ row.Usuario }}</td>
                         <td class="fecha-utc">{{ row.Fecha }}</td>
-                        <td><span style="font-family: monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">{{ row.IP }}</span></td>
+                        <td><span style="font-family: monospace;">{{ row.IP }}</span></td>
                         <td>
-                            <span class="badge {% if row.TipoDeOperacion == 'insert' %}online{% elif row.TipoDeOperacion == 'update' %}warning{% else %}offline{% endif %}">
+                            <span class="badge-tipo{% if row.TipoDeOperacion == 'insert' %}online{% elif row.TipoDeOperacion == 'update' %}warning{% else %}offline{% endif %}">
                                 {{ row.TipoDeOperacion|upper }}
                             </span>
                         </td>

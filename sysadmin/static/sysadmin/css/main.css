@@ -1,4 +1,4 @@
-/*VARIABLES Y REINICIOS GLOBALES*/
+/*VARIABLES Y REINICIOS GLOBALES (modo claro) */
 :root {
     --color-primario: #162938;
     --color-primario-oscuro: #1a202c;
@@ -17,6 +17,19 @@
     --sombra-suave: 0 4px 6px rgba(0, 0, 0, 0.1);
     --sombra-header: 0 2px 10px rgba(0, 0, 0, 0.2);
     --borde-radio: 6px;
+}
+
+/* Variables modo oscuro */
+[data-theme='dark'] {
+    --color-fondo: #121212;
+    --color-blanco: #1e1e1e;
+    --color-texto: #e0e0e0;
+    --color-primario: #48e;
+    --color-secundario: #3b82f6;
+    
+    /* Sombras y bordes */
+    --sombra-suave: 0 4px 6px rgba(0, 0, 0, 0.4);
+    --sombra-header: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 * {
@@ -47,6 +60,10 @@ HEADER Y NAVEGACIÓN
     box-shadow: var(--sombra-header);
     z-index: 999;
     padding: 12px 30px;
+}
+
+.logo {
+    color: var(--color-fondo)
 }
 
 .header-top {
@@ -136,6 +153,13 @@ CONTENEDOR PRINCIPAL
     padding: 1rem;
 }
 
+.contenedor-home {
+    border-radius: 8px;
+    padding: 25px;
+    text-align: left;
+    margin: 30px 0;
+}
+
 .titulo-principal {
     text-align: center;
     margin-bottom: 2rem;
@@ -148,10 +172,16 @@ FORMULARIOS Y TARJETAS
 .formulario-contenedor, .wrapper {
     max-width: 800px;
     margin: 0 auto;
-    background-color: var(--color-blanco);
+    background-color: var(--color-fon);
     padding: 30px;
     border-radius: 8px;
     box-shadow: var(--sombra-suave);
+    text-align: center;
+}
+
+input {
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
 }
 
 .formulario-grid {
@@ -243,6 +273,34 @@ TABLAS DE DATOS
 .tabla-datos {
     width: 100%;
     border-collapse: collapse;
+    background-color: var(--color-blanco);
+    border-radius: var(--borde-radio);
+    overflow: hidden;
+    box-shadow: var(--sombra-suave);
+}
+
+.tabla-logs th {
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    padding: 15px;
+    text-align: left;
+    opacity: 0.8;
+}
+
+.tabla-logs td {
+    padding: 15px;
+    font-size: 0.85rem;
+    color: var(--color-texto);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+    vertical-align: top;
+}
+
+.tabla-logs tbody tr:hover {
+    background-color: rgba(128, 128, 128, 0.05);
 }
 
 .tabla-datos thead {
@@ -250,14 +308,13 @@ TABLAS DE DATOS
     color: var(--color-blanco);
 }
 
-.tabla-datos th, .tabla-datos td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #eee;
-}
-
-.tabla-datos tbody tr:hover {
-    background-color: #f1f5f9;
+.badge-tipo {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-align: center;
 }
 
 /* =========================================
