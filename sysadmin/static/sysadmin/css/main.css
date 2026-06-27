@@ -63,7 +63,7 @@ HEADER Y NAVEGACIÓN
 }
 
 .logo {
-    color: var(--color-fondo)
+    color: #e0e0e0;
 }
 
 .header-top {
@@ -279,33 +279,29 @@ TABLAS DE DATOS
     box-shadow: var(--sombra-suave);
 }
 
-.tabla-logs th {
+.tabla-datos th {
     background-color: var(--color-fondo);
     color: var(--color-texto);
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.05em;
     font-weight: 600;
     padding: 15px;
+    border-bottom: 2px solid var(--color-primario);
     text-align: left;
-    opacity: 0.8;
+    white-space: nowrap;
 }
 
-.tabla-logs td {
+.tabla-datos td {
     padding: 15px;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: var(--color-texto);
-    border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.15);
     vertical-align: top;
 }
 
-.tabla-logs tbody tr:hover {
-    background-color: rgba(128, 128, 128, 0.05);
-}
-
-.tabla-datos thead {
-    background-color: var(--color-primario);
-    color: var(--color-blanco);
+.tabla-datos tbody tr:hover {
+    background-color: rgba(128, 128, 128, 0.03);
 }
 
 .badge-tipo {
@@ -315,6 +311,52 @@ TABLAS DE DATOS
     font-size: 0.75rem;
     font-weight: bold;
     text-align: center;
+}
+
+.badge-tipoonline { background-color: rgba(39, 174, 96, 0.15); color: #2ecc71; } /* INSERT */
+.badge-tipowarning { background-color: rgba(243, 156, 18, 0.15); color: #f39c12; } /* UPDATE */
+.badge-tipooffline { background-color: rgba(231, 76, 60, 0.15); color: #e74c3c; } /* DELETE */
+
+.celda-detalles {
+    max-width: 300px;
+}
+
+.lista-detalles {
+    list-style: none;
+    padding: 10px;
+    margin: 0;
+    background-color: rgba(128, 128, 128, 0.05);
+    border-radius: 6px;
+    border: 1px solid rgba(128, 128, 128, 0.1);
+    max-height: 150px;
+    overflow-y: auto;
+    text-align: left;
+}
+
+.lista-detalles::-webkit-scrollbar {
+    width: 6px;
+}
+
+.lista-detalles::-webkit-scrollbar-thumb {
+    background-color: rgba(128, 128, 128, 0.3);
+    border-radius: 10px;
+}
+
+.lista-detalles li {
+    margin-bottom: 6px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85rem;
+    line-height: 1.3;
+}
+
+.detalle-clave {
+    font-weight: 600;
+    color: var(--color-secundario);
+}
+
+.texto-vacio {
+    color: rgba(128, 128, 128, 0.5);
+    font-style: italic;
 }
 
 /* =========================================

@@ -40,7 +40,7 @@
         {% if resultados %}
             <h2 class="titulo-secundario"><i class="ri-list-check-2"></i> Resultados de la búsqueda:</h2>
             <div class="tabla-contenedor">
-                <table class="tabla-datos tabla-logs">
+                <table class="tabla-datos">
                     <thead>
                         <tr>
                             <th><i class="ri-hashtag"></i> ID</th>
@@ -60,32 +60,32 @@
                             <td class="fecha-utc">{{ row.Fecha }}</td>
                             <td><span style="font-family: monospace;">{{ row.IP }}</span></td>
                             <td>
-                                <span class="badge {% if row.TipoDeOperacion == 'insert' %}online{% elif row.TipoDeOperacion == 'update' %}warning{% else %}offline{% endif %}">
+                                <span class="badge-tipo badge-tipo{% if row.TipoDeOperacion == 'insert' %}online{% elif row.TipoDeOperacion == 'update' %}warning{% else %}offline{% endif %}">
                                     {{ row.TipoDeOperacion|upper }}
                                 </span>
                             </td>
 
-                            <td style="font-size: 0.9rem;">
+                            <td class="celda-detalles">
                                 {% if row.ValoresAnteriores %}
-                                    <ul style="list-style: none; padding: 0; margin: 0;">
-                                        {% for k, v in row.ValoresAnteriores %}
-                                            <li style="margin-bottom: 4px;"><strong style="color: #475569;">{{ k }}:</strong> {{ v }}</li>
+                                    <ul class="lista-detalles">
+                                        {% for clave, valor in row.ValoresAnteriores.items %}
+                                            <li><span class="detalle-clave">{{ clave }}:</span> {{ valor }}</li>
                                         {% endfor %}
                                     </ul>
                                 {% else %}
-                                    <span style="color: #94a3b8;">—</span>
+                                    <span class="texto-vacio">— Sin cambios —</span>
                                 {% endif %}
                             </td>
 
-                            <td style="font-size: 0.9rem;">
+                            <td class="celda-detalles">
                                 {% if row.ValoresNuevos %}
-                                    <ul style="list-style: none; padding: 0; margin: 0;">
-                                        {% for k, v in row.ValoresNuevos %}
-                                            <li style="margin-bottom: 4px;"><strong style="color: #475569;">{{ k }}:</strong> {{ v }}</li>
+                                    <ul class="lista-detalles">
+                                        {% for clave, valor in row.ValoresNuevos %}
+                                            <li><span class="detalle-clave">{{ clave }}:</span> {{ valor }}</li>
                                         {% endfor %}
                                     </ul>
                                 {% else %}
-                                    <span style="color: #94a3b8;">—</span>
+                                    <span class="texto-vacio">— Sin cambios —</span>
                                 {% endif %}
                             </td>
                         </tr>
