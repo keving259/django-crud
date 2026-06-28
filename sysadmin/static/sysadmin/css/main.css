@@ -149,17 +149,90 @@ HEADER Y NAVEGACIÓN
 CONTENEDOR PRINCIPAL
 ========================================= */
 .main-content {
-    margin-top: 20px; /* Compensa el header fijo */
+    margin-top: 20px;
     padding: 1rem;
 }
 
-.contenedor-home {
-    border-radius: 8px;
-    padding: 25px;
-    text-align: left;
-    margin: 30px 0;
+.contenedor-dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px;
 }
 
+.encabezado-dashboard {
+    margin-bottom: 30px;
+}
+
+.subtitulo-dashboard {
+    color: var(--color-texto);
+    font-size: 1.1rem;
+    margin-top: 5px;
+    opacity: 0.8;
+}
+
+.grid-estadisticas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.tarjeta-kpi {
+    background-color: var(--color-blanco);
+    border-radius: var(--borde-radio);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: var(--sombra-suave);
+    border: 1px solid rgba(128, 128, 128, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tarjeta-kpi:hover {
+    transform: translateY(-4px); 
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .tarjeta-kpi:hover {
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+}
+
+.kpi-icono {
+    background-color: rgba(0, 123, 255, 0.1);
+    color: var(--color-secundario);
+    width: 55px;
+    height: 55px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+    flex-shrink: 0;
+}
+
+.kpi-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.kpi-etiqueta {
+    font-size: 0.75rem;
+    color: var(--color-texto);
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 5px;
+}
+
+.kpi-valor {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--color-texto);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
 .titulo-principal {
     text-align: center;
     margin-bottom: 2rem;
@@ -169,14 +242,15 @@ CONTENEDOR PRINCIPAL
 /* =========================================
 FORMULARIOS Y TARJETAS
 ========================================= */
-.formulario-contenedor, .wrapper {
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: var(--color-fon);
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: var(--sombra-suave);
-    text-align: center;
+.formulario-filtros {
+    max-width: 100%;
+    background-color: transparent;
+    padding: 10px 0 25px 0;
+    border-radius: 0;
+    box-shadow: none;
+    border-bottom: 2px dashed rgba(128, 128, 128, 0.2);
+    text-align: left;
+    margin-bottom: 20px;
 }
 
 input {
@@ -188,6 +262,7 @@ input {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
+    align-items: end;
 }
 
 .campo-form {
@@ -198,23 +273,26 @@ input {
 .campo-form label {
     font-weight: 600;
     margin-bottom: 8px;
+    font-size: 0.9rem;
     color: var(--color-primario);
 }
 
 .campo-form input,
 .campo-form select {
-    padding: 10px;
-    border: 1px solid #ccc;
+    padding: 10px 12px;
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    background-color: var(--color-blanco);
+    color: var(--color-texto);
     border-radius: var(--borde-radio);
-    font-size: 1rem;
-    transition: border-color 0.3s;
+    font-size: 0.95rem;
+    transition: all 0.3 ease;
 }
 
 .campo-form input:focus,
 .campo-form select:focus {
     border-color: var(--color-secundario);
     outline: none;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
 }
 
 /* =========================================
@@ -223,7 +301,7 @@ BOTONES
 .boton-submit {
     grid-column: 1 / -1;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     margin-top: 20px;
 }
 

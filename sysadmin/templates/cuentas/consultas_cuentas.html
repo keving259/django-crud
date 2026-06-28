@@ -6,7 +6,7 @@
 <div class="contenedor">
     <h1 class="titulo-principal"><i class="ri-wallet-3-fill"></i> Directorio de Cuentas</h1>
 
-    <div class="formulario-contenedor">
+    <div class="formulario-filtros">
         <form method="post">
             {% csrf_token %}
             <div class="formulario-grid">
@@ -98,7 +98,7 @@
             </table>
         </div>
     {% elif id_cuenta or nombre_completo or telefono or correo %}
-        <div class="formulario-contenedor" style="text-align: center; padding: 40px; margin-top: 30px;">
+        <div class="formulario-filtros" style="text-align: center; padding: 40px; margin-top: 30px;">
             <i class="ri-folder-info-line" style="font-size: 3rem; color: #a0aec0;"></i>
             <h3 style="color: #4a5568; margin-top: 10px;">No se encontraron cuentas</h3>
             <p style="color: #718096;">Intenta modificar o limpiar los criterios de búsqueda.</p>

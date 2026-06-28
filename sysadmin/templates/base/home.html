@@ -3,38 +3,52 @@
 {% block title %}Inicio | SysAdmin{% endblock %}
 
 {% block content %}
-<div class="contenedor">
-    <h1 class="titulo-principal"><i class="ri-dashboard-3-fill"></i> Panel de Control</h1>
+<div class="contenedor-dashboard">
+    <div class="encabezado-dashboard">
+        <h1 class="titulo-principal"><i class="ri-dashboard-3-fill"></i> Panel de Control</h1>
+        <p class="subtitulo-dashboard">¡Bienvenido de nuevo, <strong>{{ usuario }}</strong>!</p>
+    </div>
 
-    <div class="formulario-contenedor" style="max-width: 600px; text-align: center; padding: 40px;">
-        <i class="ri-user-smile-line" style="font-size: 4.5rem; color: var(--color-primario);"></i>
-        <h2 style="margin: 15px 0; color: var(--color-primario);">¡Bienvenido, {{ usuario }}!</h2>
-        
-        <div class="contenedor-home">
-            <p style="margin-bottom: 15px; font-size: 1.1rem; color: var(--color-texto);">
-                <i class="ri-shield-star-line" style="color: var(--color-secundario); font-size: 1.3rem; vertical-align: middle;"></i> 
-                <strong>Rol del Sistema:</strong> {{ tipo }}
-            </p>
-            <p style="margin-bottom: 15px; font-size: 1.1rem;">
-                <i class="ri-calendar-check-line" style="color: var(--color-secundario); font-size: 1.3rem; vertical-align: middle;"></i> 
-                <strong>Último acceso:</strong> {{ last_login }}
-            </p>
-            <p style="margin-bottom: 15px; font-size: 1.1rem;">
-                <i class="ri-login-circle-line" style="color: var(--color-secundario); font-size: 1.3rem; vertical-align: middle;"></i> 
-                <strong>Total de inicios de sesión:</strong> {{ total_login }}
-            </p>
-            <p style="margin-bottom: 0; font-size: 1.1rem;">
-                <i class="ri-global-line" style="color: var(--color-secundario); font-size: 1.3rem; vertical-align: middle;"></i> 
-                <strong>Hora de conexión:</strong> <span id="hora-utc-home">{{ hora_utc_actual|date:"Y-m-d H:i:s" }}</span> UTC
-            </p>
+    <div class="grid-estadisticas">
+        <div class="tarjeta-kpi">
+            <div class="kpi-icono">
+                <i class="ri-shield-star-line"></i>
+            </div>
+            <div class="kpi-info">
+                <span class="kpi-etiqueta">Rol del Sistema</span>
+                <span class="kpi-valor">{{ tipo }}</span>
+            </div>
         </div>
 
-        <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-primario no-loader" style="background-color: #e74c3c; width: 100%; font-size: 1.1rem; padding: 12px;">
-                <i class="ri-logout-box-r-line"></i> Cerrar Sesión
-            </button>
-        </form>
+        <div class="tarjeta-kpi">
+            <div class="kpi-icono">
+                <i class="ri-calendar-check-line"></i>
+            </div>
+            <div class="kpi-info">
+                <span class="kpi-etiqueta">Último acceso</span>
+                <span class="kpi-valor" style="font-size: 0.9rem;">{{ last_login }}</span>
+            </div>
+        </div>
+
+        <div class="tarjeta-kpi">
+            <div class="kpi-icono">
+                <i class="ri-login-circle-line"></i>
+            </div>
+            <div class="kpi-info">
+                <span class="kpi-etiqueta">Total de accesos</span>
+                <span class="kpi-valor">{{ total_login }}</span>
+            </div>
+        </div>
+
+        <div class="tarjeta-kpi">
+            <div class="kpi-icono">
+                <i class="ri-global-line"></i>
+            </div>
+            <div class="kpi-info">
+                <span class="kpi-etiqueta">Hora de conexión (UTC)</span>
+                <span class="kpi-valor" id="hora-utc-home" style="font-size: 0.9rem;">{{ hora_utc_actual|date:"Y-m-d H:i:s" }}</span>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

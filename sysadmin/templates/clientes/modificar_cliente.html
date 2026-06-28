@@ -21,10 +21,10 @@
     {% endif %}
 
     {% if tipo == "Master" %}
-        <div class="formulario-contenedor" style="max-width: 500px; margin-bottom: 40px;">
-            <form method="post" style="display: flex; gap: 15px; align-items: flex-end;">
+        <div class="formulario-filtros">
+            <form method="post" style='max-width: 30%; margin: auto;'>
                 {% csrf_token %}
-                <div class="campo-form" style="flex: 1; margin-bottom: 0;">
+                <div class="campo-form">
                     <label for="id_cliente"><i class="ri-search-eye-line"></i> Buscar por ID de Cliente</label>
                     <input type="number" id="id_cliente" name="id_cliente" list="lista_id_clientes" required 
                         placeholder="Ej: 101" title="Ingresa el ID numérico del cliente" value="{{ cliente.IDCliente|default:'' }}">
@@ -34,8 +34,8 @@
                         {% endfor %}
                     </datalist>
                 </div>
-                <div class="boton-submit" style="margin-top: 0;">
-                    <button type="submit" name="buscar" class="btn btn-primario no-loader" style="height: 42px;">
+                <div class="boton-submit">
+                    <button type="submit" name="buscar" class="btn btn-primario no-loader">
                         Buscar
                     </button>
                 </div>
@@ -43,9 +43,9 @@
         </div>
 
         {% if cliente %}
-        <div class="formulario-contenedor">
-            <h2 class="titulo-secundario" style="margin-bottom: 25px; color: var(--color-primario); border-bottom: 2px solid #eee; padding-bottom: 10px;">
-                <i class="ri-edit-2-line"></i> Editando datos de: {{ cliente.Nombre }}
+        <div class="formulario-filtros">
+            <h2 class="titulo-secundario">
+                <i class="ri-edit-2-line"></i> Editando datos de: {{ cliente.Nombre }} {{ cliente.Apellido }}
             </h2>
             
             <form method="post" class="formulario-grid">
@@ -54,48 +54,37 @@
 
                 <div class="campo-form">
                     <label for="nombre"><i class="ri-user-line"></i> Nombre</label>
-                    <input type="text" id="nombre" name="nombre" class="sin-acentos" 
-                           placeholder="Ej: Juan" value="{{ cliente.Nombre }}" required
-                           pattern="[A-Za-z\s]+" title="Solo letras sin acentos.">
+                    <input type="text" id="nombre" name="nombre" class="sin-acentos" placeholder="Ej: Juan" value="{{ cliente.Nombre }}" required pattern="[A-Za-z\s]+" title="Solo letras sin acentos.">
                 </div>
 
                 <div class="campo-form">
                     <label for="apellido"><i class="ri-user-line"></i> Apellido</label>
-                    <input type="text" id="apellido" name="apellido" class="sin-acentos" 
-                           placeholder="Ej: Perez" value="{{ cliente.Apellido }}" required
-                           pattern="[A-Za-z\s]+" title="Solo letras sin acentos.">
+                    <input type="text" id="apellido" name="apellido" class="sin-acentos" placeholder="Ej: Perez" value="{{ cliente.Apellido }}" required pattern="[A-Za-z\s]+" title="Solo letras sin acentos.">
                 </div>
 
                 <div class="campo-form">
                     <label for="telefono"><i class="ri-phone-line"></i> Teléfono</label>
-                    <input type="text" id="telefono" name="telefono" 
-                           placeholder="Ej: 5512345678" value="{{ cliente.Telefono }}"
-                           pattern="[0-9]{10,}" title="Solo números, mínimo 10 dígitos."
-                           oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                    <input type="text" id="telefono" name="telefono" placeholder="Ej: 5512345678" value="{{ cliente.Telefono }}"pattern="[0-9]{10,}" title="Solo números, mínimo 10 dígitos." oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 </div>
 
                 <div class="campo-form">
                     <label for="correo"><i class="ri-mail-line"></i> Correo Electrónico</label>
-                    <input type="email" id="correo" name="correo" 
-                           placeholder="usuario@ejemplo.com" value="{{ cliente.Correo }}"
-                           title="Introduce un correo electrónico válido.">
+                    <input type="email" id="correo" name="correo" placeholder="usuario@ejemplo.com" value="{{ cliente.Correo }}" title="Introduce un correo electrónico válido.">
                 </div>
 
                 <div class="campo-form" style="grid-column: 1 / -1;">
                     <label for="direccion"><i class="ri-map-pin-line"></i> Dirección</label>
-                    <input type="text" id="direccion" name="direccion" class="sin-acentos" 
-                           placeholder="Ej: Av. Insurgentes 123" value="{{ cliente.Direccion }}"
-                           pattern="[A-Za-z0-9\s.,#\-]+" title="Evita acentos y símbolos especiales.">
+                    <input type="text" id="direccion" name="direccion" class="sin-acentos" placeholder="Ej: Av. Insurgentes 123" value="{{ cliente.Direccion }}" pattern="[A-Za-z0-9\s.,#\-]+" title="Evita acentos y símbolos especiales.">
                 </div>
 
-                <div class="campo-form" style="grid-column: 1 / -1; display: flex; flex-direction: row; align-items: center; gap: 10px; background-color: #fff5f5; padding: 15px; border-radius: 6px; border: 1px solid #fecdd3;">
+                <div class="campo-form">
                     <input type="checkbox" id="deleted" name="deleted" {% if cliente.Deleted %}checked{% endif %} style="width: 20px; height: 20px; cursor: pointer;">
-                    <label for="deleted" style="margin: 0; color: #e11d48; cursor: pointer;">
+                    <label for="deleted">
                         <i class="ri-delete-bin-2-line"></i> Marcar cliente como inactivo (Soft Delete)
                     </label>
                 </div>
 
-                <div class="boton-submit" style="grid-column: 1 / -1; margin-top: 20px;">
+                <div class="boton-submit">
                     <button type="submit" name="modificar" class="btn btn-primario" style="width: 100%; font-size: 1.1rem; padding: 12px;">
                         <i class="ri-save-3-line"></i> Guardar Cambios
                     </button>
@@ -105,9 +94,9 @@
         {% endif %}
 
     {% else %}
-        <div class="formulario-contenedor" style="text-align: center; padding: 50px; margin-top: 40px; border-top: 4px solid #e74c3c;">
-            <i class="ri-lock-2-fill" style="font-size: 4rem; color: #e74c3c;"></i>
-            <h2 style="color: #2c3e50; margin-top: 15px;">Acceso Restringido</h2>
+        <div class="formulario-filtros">
+            <i class="ri-lock-2-fill"></i>
+            <h2>Acceso Restringido</h2>
             <p style="color: #7f8c8d; margin-top: 10px; font-size: 1.1rem;">
                 Esta sección de modificación estructural solo está disponible para usuarios con rol <strong>Master</strong>.
             </p>

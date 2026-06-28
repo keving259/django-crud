@@ -6,7 +6,7 @@
 <div class="contenedor">
     <h1 class="titulo-principal"><i class="ri-team-fill"></i> Directorio de Clientes</h1>
 
-    <div class="formulario-contenedor">
+    <div class="formulario-filtros">
         <form method="GET">
             <div class="formulario-grid">
                 <div class="campo-form">
@@ -90,7 +90,7 @@
             </table>
         </div>
     {% elif nombre_completo or telefono or correo or direccion or registro %}
-        <div class="formulario-contenedor" style="text-align: center; padding: 40px; margin-top: 30px;">
+        <div class="formulario-filtros" style="text-align: center; padding: 40px; margin-top: 30px;">
             <i class="ri-folder-info-line" style="font-size: 3rem; color: #a0aec0;"></i>
             <h3 style="color: #4a5568; margin-top: 10px;">No se encontraron resultados</h3>
             <p style="color: #718096;">Intenta modificar o limpiar los filtros de búsqueda.</p>
