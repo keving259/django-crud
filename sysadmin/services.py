@@ -99,10 +99,10 @@ def obtener_cuenta_por_id_bd(id_cuenta):
         print(f'[ERROR] No se pudo obtener cuenta por ID: {e}')
     return None
 
-def modificar_cuenta_bd(id_cuenta, id_cliente, estado, modified_by, deleted, zona_horaria, ip_cliente):
+def modificar_cuenta_bd(id_cuenta, id_cliente, saldo, estado, modified_by, deleted, zona_horaria, ip_cliente):
     with connections['default'].cursor() as cursor:
         cursor.callproc('modificar_cuenta', [
-            id_cuenta, id_cliente, estado, modified_by, deleted, zona_horaria, ip_cliente
+            id_cuenta, id_cliente, saldo, estado, modified_by, deleted, zona_horaria, ip_cliente
         ])
 
 def buscar_clientes_bd(nombre, telefono, correo, direccion, registro):

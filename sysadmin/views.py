@@ -167,7 +167,7 @@ def agregar_cliente(request):
                 
                 messages.success(request, "Cliente agregado correctamente.")
                 
-                return redirect('/agregar_cliente/')
+                return redirect('agregar_cliente')
             
             except Exception as e:
                 print(f"[ERROR] Error al agregar al cliente: {e}")
@@ -213,7 +213,7 @@ def agregar_cuenta(request):
                         zona_horaria=datos.get('zona_horaria', 'UTC')
                     )
                     messages.success(request, "Cuenta agregada correctamente.")
-                    return redirect('/agregar_cuenta/')
+                    return redirect('agregar_cuenta')
                 
                 except ValueError as ve:
                     messages.error(request, str(ve))
@@ -232,11 +232,6 @@ def agregar_cuenta(request):
         'tipo' : request.session.get('tipo'),
         'sugerencias_clientes' : sugerencias_clientes,
     })
-
-@never_cache
-@rol_requerido(['Master'])
-def modificar_menu(request):
-    return render(request, 'menus/modificar_menu.html')
 
 @never_cache
 @rol_requerido(['Master'])
@@ -278,7 +273,7 @@ def modificar_cliente(request, id=None):
                     )
                     messages.success(request, "Cliente modificado correctamente.")
                     
-                    return redirect(f'/modificar_cliente/{datos["id_cliente"]}/')
+                    return redirect('modificar_cliente', id=datos['id_cliente'])
                 except Exception as e:
                     print(f"[ERROR] Error al modificar cliente: {e}")
                     messages.error(request, "Ocurrió un error inesperado al guardar en la base de datos.")
@@ -328,7 +323,7 @@ def modificar_cuenta(request, id=None):
                 datos = form.cleaned_data
                 try:
                     modificar_cuenta_bd(
-                        id_cuenta=datos['id_cliente'],
+                        id_cuenta=datos['id_cuenta'],
                         id_cliente=datos['id_cliente'],
                         saldo=datos['saldo'],
                         estado=datos['estado'],
@@ -339,7 +334,8 @@ def modificar_cuenta(request, id=None):
                     )
                     messages.success(request, "Cuenta modificada correctamente.")
                     
-                    return redirect(f'/modificar_cuenta/{datos["id_cliente"]}/')
+                    return redirect(f'modificar_cuenta', id=datos['id_cuenta'])
+                
                 except Exception as e:
                     print(f"[ERROR] Error al modificar cuenta: {e}")
                     messages.error(request, "Ocurrió un error inesperado al guardar en la base de datos.")
