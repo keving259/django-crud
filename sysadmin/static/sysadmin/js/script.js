@@ -152,29 +152,51 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- LÓGICA DEL MENÚ HAMBURGUESA ---
-    const menuToggle = document.getElementById('menu-toggle');
-    const navLinks = document.getElementById('nav-links');
+    const menuToggle = document.getElementById("menu-toggle");
+    const navContainer = document.getElementById("nav-links");
 
-    if (menuToggle && navLinks) {
-        const iconMenu = menuToggle.querySelector('i');
+    if (menuToggle && navContainer) {
+        const iconMenu = menuToggle.querySelector("i");
+        menuToggle.addEventListener("click", () => {
+            navContainer.classList.toggle("active");
 
-        menuToggle.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-
-            if (navLinks.classList.contains('active')) {
-                iconMenu.classList.remove('ri-menu-line');
-                iconMenu.classList.add('ri-close-line');
+            if (navContainer.classList.contains("active")) {
+                iconMenu.classList.replace("ri-menu-line", "ri-close-line");
             } else {
-                iconMenu.classList.remove('ri-close-line');
-                iconMenu.classList.add('ri-menu-line');
+                iconMenu.classList.replace("ri-close-line", "ri-menu-line");
             }
         });
 
-        document.addEventListener('click', (e) => {
-            if (!navLinks.contains(e.target) && !menuToggle.contains(e.target)) {
-                navLinks.classList.remove('active');
-                iconMenu.classList.remove('ri-close-line');
-                iconMenu.classList.add('ri-menu-line');
+        if (window.innerWidth <= 768) {
+            document.querySelectorAll(".submenu > a")
+            .forEach(link => {
+                link.addEventListener("click", function(e) {
+                    const submenu = this.nextElementSibling;
+                    if (!submenu) return;
+                    e.preventDefault();
+                    submenu.classList.toggle("active");
+                    const flecha =
+                        this.querySelector(".ri-arrow-down-s-line");
+                    if (flecha) {
+                        flecha.style.transform =
+                            submenu.classList.contains("active")
+                                ? "rotate(180deg)"
+                                : "rotate(0deg)";
+                    }
+                });
+            });
+        }
+        document.addEventListener("click", (e) => {
+
+            if (
+                !navContainer.contains(e.target) &&
+                !menuToggle.contains(e.target)
+            ) {
+
+                navContainer.classList.remove("active");
+
+                iconMenu.classList.remove("ri-close-line");
+                iconMenu.classList.add("ri-menu-line");
             }
         });
     }

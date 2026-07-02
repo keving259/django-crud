@@ -39,68 +39,144 @@
             <h2>SysAdmin</h2>
         </div>
 
-        <button class="menu-toggle" id='menu-toggle' aria-label='Abrir menú'>
+        <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">
             <i class="ri-menu-line"></i>
         </button>
 
-        <ul class="nav-list" id="nav-links">
-            {% if request.session.id_usuario %}
+        <div class="nav-container" id="nav-links">
+
+            <ul class="nav-list">
+                {% if request.session.id_usuario %}
                 <li>
-                    <a href="{% url 'home' %}"><i class="ri-home-4-line"></i> Inicio</a>
+                    <a href="{% url 'home' %}">
+                        <i class="ri-home-4-line"></i>
+                        Inicio
+                    </a>
                 </li>
-            {% endif %}
+                {% endif %}
 
-            {% if tipo in "Master,Lector" %}
-            <li class="submenu">
-                <a href="#"><i class="ri-search-line"></i> Consultas <i class="ri-arrow-down-s-line"></i></a>
-                <ul class="submenu-list">
-                    <li><a href="{% url 'consultas_clientes' %}">Clientes</a></li>
-                    <li><a href="{% url 'consultas_cuentas' %}">Cuentas</a></li>
-                </ul>
-            </li>
-            {% endif %}
-
-            {% if tipo == "Sistema" %}
+                {% if tipo in "Master,Lector" %}
                 <li class="submenu">
-                    <a href="#"><i class="ri-file-list-3-line"></i> Auditoría <i class="ri-arrow-down-s-line"></i></a>
-                    <ul class="submenu-list">
-                        <li><a href="{% url 'consultar_logs_clientes' %}">Logs Clientes</a></li>
-                        <li><a href="{% url 'consultar_logs_cuentas' %}">Logs Cuentas</a></li>
-                    </ul>
-                </li>
-            {% endif %}
-
-            {% if tipo == "Master" %}
-                <li><a href="{% url 'signup_step1' %}"><i class="ri-user-add-line"></i> Nuevo Usuario</a></li>
-                
-                <li class="submenu">
-                    <a href="#"><i class="ri-add-circle-line"></i> Insertar <i class="ri-arrow-down-s-line"></i></a>
-                    <ul class="submenu-list">
-                        <li><a href="{% url 'agregar_cliente' %}">Cliente</a></li>
-                        <li><a href="{% url 'agregar_cuenta' %}">Cuenta</a></li>
-                    </ul>
-                </li>
-                
-                <li class="submenu">
-                    <a href="#"><i class="ri-edit-line"></i> Modificar <i class="ri-arrow-down-s-line"></i></a>
-                    <ul class="submenu-list">
-                        <li><a href="{% url 'modificar_cliente' %}">Clientes</a></li>
-                        <li><a href="{% url 'modificar_cuenta' %}">Cuentas</a></li>
-                    </ul>
-                </li>
-            {% endif %}
-            {% if request.session.id_usuario %}
-                <li>
-                    <a href="#" onclick="document.getElementById('form-logout-nav').submit(); return false;" style="color: #ef4444;">
-                        <i class="ri-logout-circle-r-line"></i> Cerrar Sesión
+                    <a href="#">
+                        <i class="ri-search-line"></i>
+                        Consultas
+                        <i class="ri-arrow-down-s-line"></i>
                     </a>
 
-                    <form id="form-logout-nav" method="post" action="{% url 'logout' %}" style="display: none;">
+                    <ul class="submenu-list">
+                        <li>
+                            <a href="{% url 'consultas_clientes' %}">
+                                Clientes
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'consultas_cuentas' %}">
+                                Cuentas
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                {% endif %}
+
+                {% if tipo == "Sistema" %}
+                <li class="submenu">
+                    <a href="#">
+                        <i class="ri-file-list-3-line"></i>
+                        Auditoría
+                        <i class="ri-arrow-down-s-line"></i>
+                    </a>
+
+                    <ul class="submenu-list">
+                        <li>
+                            <a href="{% url 'consultar_logs_clientes' %}">
+                                Logs Clientes
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'consultar_logs_cuentas' %}">
+                                Logs Cuentas
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                {% endif %}
+
+                {% if tipo == "Master" %}
+
+                <li>
+                    <a href="{% url 'signup_step1' %}">
+                        <i class="ri-user-add-line"></i>
+                        Nuevo Usuario
+                    </a>
+                </li>
+                
+                <li class="submenu">
+                    <a href="#">
+                        <i class="ri-add-circle-line"></i>
+                        Insertar
+                        <i class="ri-arrow-down-s-line"></i>
+                    </a>
+
+                    <ul class="submenu-list">
+                        <li>
+                            <a href="{% url 'agregar_cliente' %}">
+                                Cliente
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'agregar_cuenta' %}">
+                                Cuenta
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="submenu">
+                    <a href="#">
+                        <i class="ri-edit-line"></i>
+                        Modificar
+                        <i class="ri-arrow-down-s-line"></i>
+                    </a>
+
+                    <ul class="submenu-list">
+                        <li>
+                            <a href="{% url 'modificar_cliente' %}">
+                                Clientes
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'modificar_cuenta' %}">
+                                Cuentas
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                {% endif %}
+
+                {% if request.session.id_usuario %}
+                <li>
+                    <a href="#"
+                    onclick="document.getElementById('form-logout-nav').submit(); return false;"
+                    style="color: #ef4444;">
+                        <i class="ri-logout-circle-r-line"></i>
+                        Cerrar Sesión
+                    </a>
+
+                    <form id="form-logout-nav"
+                        method="post"
+                        action="{% url 'logout' %}"
+                        style="display: none;">
                         {% csrf_token %}
                     </form>
                 </li>
-            {% endif %}
-        </ul>
+                {% endif %}
+            </ul>
+        </div>
     </nav>
 </header>
 {% endblock %}
