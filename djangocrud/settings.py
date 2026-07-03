@@ -15,6 +15,7 @@ from django.contrib.messages import constants as messages
 import os
 from dotenv import load_dotenv
 import dj_database_url
+from decouple import config
 
 load_dotenv()
 
@@ -116,22 +117,22 @@ WSGI_APPLICATION = 'djangocrud.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME', 'caja_de_ahorro'),
-        'USER': os.environ.get('DB_USER', 'root'),
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
         'PASSWORD' : os.environ.get('DB_PASSWORD'),
-        'HOST' : os.environ.get('DB_HOST_MASTER', '127.0.0.1'), # Master IP
-        'PORT': os.environ.get('DB_PORT', '3306'),
+        'HOST' : os.environ.get('DB_HOST_MASTER'), # Master IP
+        'PORT': os.environ.get('DB_PORT'),
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         }
     },
     'replica' : {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME', 'caja_de_ahorro'),
-        'USER': os.environ.get('DB_USER', 'root'),
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
         'PASSWORD' : os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST_REPLICA', '127.0.0.1'), # Slave IP
-        'PORT': os.environ.get('DB_PORT', '3306'),
+        'HOST': os.environ.get('DB_HOST_REPLICA'), # Slave IP
+        'PORT': os.environ.get('DB_PORT'),
     }
 }
 
