@@ -112,11 +112,6 @@ class FiltroClienteForm(forms.Form):
     direccion = forms.CharField(required=False)
     registro = forms.CharField(required=False)
 
-class MiFormulario(forms.Form):
-    nombre = forms.CharField(max_length=100, required=True)
-    correo = forms.EmailField(required=True)
-    edad = forms.IntegerField(min_value=18, max_value=99, required=True)
-
 class FiltroCuentasForm(forms.Form):
     id_cuenta = forms.CharField(required=False)
     nombre_completo = forms.CharField(required=False)

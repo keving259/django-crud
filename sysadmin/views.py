@@ -63,13 +63,6 @@ def home(request):
     }
     return render(request, 'base/home.html', contexto)
 
-
-@require_POST
-def logout(request):
-    print("Logout")
-    request.session.flush()
-    return redirect('/login/')
-
 @csrf_exempt
 @never_cache
 def login(request):
@@ -130,6 +123,12 @@ def login(request):
             })
 
     return render(request, 'auth/login.html', { 'mensaje': mensaje })
+
+@require_POST
+def logout(request):
+    print("Logout")
+    request.session.flush()
+    return redirect('login')
 
 @never_cache
 @rol_requerido(['Master'])
