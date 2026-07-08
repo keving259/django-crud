@@ -3,6 +3,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 class LoginTests(TestCase):
+    databases = {'default', 'replica'}
     def setUp(self):
         self.correo = 'master@test.com'
         self.zona_horaria = 'America/Mexico_City'
@@ -64,7 +65,7 @@ class LoginTests(TestCase):
     @patch('sysadmin.views.autenticar_usuario_bd')
     def test_usuario_inexistente(self, mock_auth):
         mock_auth.return_value = {
-            'Estado' : 'login fallido'
+            'Estado' : 'El correo ingresado no es válido.'
         }
         
         response = self.client.post(
@@ -80,7 +81,7 @@ class LoginTests(TestCase):
         
         self.assertContains(
             response,
-            'login fallido'
+            'El correo ingresado no es válido.'
         )
         
     

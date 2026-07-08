@@ -1,7 +1,11 @@
 from django.conf import settings
+import sys
 
 class MasterSlaveRouter:
     def db_for_read(self, model, **hints):
+        if 'test' in sys.argv:
+            return 'default'
+        
         if settings.DEBUG:
             return 'default'
         return 'replica'

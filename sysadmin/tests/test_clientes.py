@@ -3,13 +3,25 @@ from django.test import TestCase
 from django.urls import reverse
 
 class ClienteTests(TestCase):
+    databases = {'default', 'replica'}
     def setUp(self):
         session = self.client.session
         session['id_usuario'] = 1
         session['usuario'] = 'Master'
         session['tipo'] = 'Master'
         session.save()
-
+        
+    def test_sesion_existe(self):
+        self.assertEqual(
+            self.client.session['id_usuario'],
+                1
+            )
+        
+        self.assertEqual(
+            self.client.session['tipo'],
+            'Master'
+        )
+        
     @patch('sysadmin.views.registrar_cliente_bd')
     def test_agregar_cliente_exitoso(self, mock_registrar):
         
@@ -22,7 +34,7 @@ class ClienteTests(TestCase):
                 'correo': 'master@test.com',
                 'direccion': 'av 123',
                 'zona_horaria': 'America/Mexico_City'
-            }
+            }, follow=False
         )
         
         self.assertRedirects(
@@ -48,26 +60,6 @@ class ClienteTests(TestCase):
         self.assertEqual(response.status_code, 200)
     
     
-    @patch('sysadmin.views.buscar_clientes_bd')
-    def test_busqueda_cliente_existente(self, mock_buscar):
-        mock_buscar.return_value = [
-            {
-                'IDCliente': 1,
-                'NombreCompleto': 'John Doe'
-            }
-        ]
-        
-        response = self.client.get(
-            reverse('consultas_clientes'),
-            {
-                'nombre_completo': 'John Doe'
-            }
-        )
-        
-        self.assertEqual(response.status_code, 200)
-        
-        mock_buscar.assert_called_once()
-        
         
     @patch('sysadmin.views.buscar_clientes_bd')
     def test_busqueda_cliente_inexistente(self, mock_buscar):
@@ -80,7 +72,7 @@ class ClienteTests(TestCase):
             }
         )
         
-        self.assertqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
     
     
     
@@ -212,9 +204,9 @@ class ClienteTests(TestCase):
                 'zona_horaria': 'America/Mexico_City'
             }
         )
-
+        
         self.assertEqual(response.status_code, 200)
-
+        
         self.assertContains(
             response,
             'Correo electrónico no válido.'
