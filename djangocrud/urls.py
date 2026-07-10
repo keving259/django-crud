@@ -23,5 +23,6 @@ urlpatterns = [
 ]
 
 handler400 = 'sysadmin.views.error_400_view'
+handler403 = 'sysadmin.views.error_403_view'
 handler404 = 'sysadmin.views.error_404_view'
 handler500 = 'sysadmin.views.error_500_view'

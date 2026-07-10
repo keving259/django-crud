@@ -8,6 +8,7 @@ from functools import wraps
 import urllib.parse
 from django.urls import reverse
 import time
+from django.core.exceptions import PermissionDenied
 from .forms import LoginForm, ClientForm, CuentaForm, ModiciarClienteForm, ModificarCuentaForm, FiltroClienteForm, FiltroCuentasForm, FiltroLogsForm, SignupStep1Form, SignupStep2Form
 from django.utils.timezone import now
 from .utils import get_client_ip, validar_ip, obtener_lag_replicacion
@@ -39,7 +40,7 @@ def rol_requerido(roles):
             
             tipo_usuario = request.session.get('tipo')
             if tipo_usuario not in roles:
-                return redirect('acceso_denegado')
+                raise PermissionDenied
             return vista_funcion(request, *args, **kwargs)
         return wrapper
     return decorador
@@ -708,31 +709,26 @@ def estado_sesion(request):
     else:
         return JsonResponse({'estado': 'inactivo'})
 
-# Error 403
-def acceso_denegado(request):
-    mensaje = "No tienes permisos para acceder a esta página."
-    destino = "home"
-
-    if not request.session.get('usuario'):
-        mensaje = "Debes iniciar sesión para acceder a esta página."
-        destino = "/home/"
-
-    return render(request, 'base/403.html', {
-        'mensaje': mensaje,
-        'volver_a': destino
-    })
 
 
-def renderizar_error(request, codigo, mensaje):
-    return render(request, 'base/error.html', {
-        'codigo': codigo,
-        'mensaje': mensaje
-    }, status=codigo)
+def renderizar_error(request, codigo, mensaje, status=None):
+    return render(
+        request,
+        'base/error.html',
+        {
+            'codigo': codigo,
+            'mensaje': mensaje
+        },
+            status=status or codigo
+    )
 
-def error_400_view(request, exception):
+def error_400_view(request, exception=None):
     return renderizar_error(request, 400, "La petición al servidor fue incorrecta o está corrupta.")
 
-def error_404_view(request, exception):
+def error_403_view(request, exception=None):
+    return renderizar_error(request, 403, 'No tienes permisos para acceder a este recurso')
+
+def error_404_view(request, exception=None):
     return renderizar_error(request, 404, "La página o el recurso que estás buscando no existe o fue movido.")
 
 def error_500_view(request):

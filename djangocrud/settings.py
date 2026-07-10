@@ -89,7 +89,7 @@ ROOT_URLCONF = 'djangocrud.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -102,7 +102,6 @@ TEMPLATES = [
                 'sysadmin.context_processors.estado_usuario',
                 'sysadmin.context_processors.hora_utc_actual',
                 'sysadmin.context_processors.replicacion_context',
-
             ],
         },
     },
